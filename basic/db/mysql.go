@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"micro_demo/basic/config"
+
 	log "github.com/micro/go-micro/v2/logger"
 )
 

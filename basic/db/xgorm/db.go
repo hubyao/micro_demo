@@ -1,7 +1,6 @@
 package xgorm
 
 import (
-	"fmt"
 	"sync"
 
 	"micro_demo/basic/config"
@@ -14,33 +13,32 @@ import (
 )
 
 var (
-	dbConf conf.Database
-	db     *gorm.DB
-	once   sync.Once
+	dbConf conf.Database // 数据库配置
+	db     *gorm.DB      // gorm cli
+	once   sync.Once     // 用于单例
 )
 
-// Init ...
+// Init 初始化
 func Init() {
-	dbConf = conf.Database{}
-	log.Debugf("config %v", config.GetMysqlConfig().GetURL())
+	// 单例
+	once.Do(func() {
+		dbConf = conf.Database{}
+		xdb, err := gorm.Open("mysql", config.GetMysqlConfig().GetURL())
+		if err != nil {
+			log.Fatal(err)
+			return
+		}
 
-	fmt.Println("config ", config.GetMysqlConfig().GetURL())
-	xdb, err := gorm.Open("mysql", config.GetMysqlConfig().GetURL())
-	if err != nil {
-		log.Fatal(err)
-		return
-	}
-
-	xdb.DB().SetMaxOpenConns(dbConf.MaxOpenConns)
-	xdb.DB().SetMaxIdleConns(dbConf.MaxIdleConns)
-	xdb.DB().SetConnMaxLifetime(dbConf.ConnMaxLifetime)
-	xdb.SingularTable(true)
-
-	db = xdb
+		// 设置连接池
+		xdb.DB().SetMaxOpenConns(dbConf.MaxOpenConns)
+		xdb.DB().SetMaxIdleConns(dbConf.MaxIdleConns)
+		xdb.DB().SetConnMaxLifetime(dbConf.ConnMaxLifetime)
+		xdb.SingularTable(true)
+		db = xdb
+	})
 }
 
 // GetDB 获取db
 func GetDB() *gorm.DB {
-
 	return db
 }

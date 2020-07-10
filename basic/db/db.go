@@ -7,8 +7,9 @@ import (
 
 	_ "github.com/go-sql-driver/mysql"
 
-	log "github.com/micro/go-micro/v2/logger"
 	"micro_demo/basic/config"
+
+	log "github.com/micro/go-micro/v2/logger"
 )
 
 var (
@@ -17,7 +18,7 @@ var (
 	m       sync.RWMutex
 )
 
-// Init 初始化数据库
+// Init 初始化
 func Init() {
 	m.Lock()
 	defer m.Unlock()
