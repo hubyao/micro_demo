@@ -107,7 +107,7 @@
 
 
 ### 数据库 [TODO]
-- 每个表必须要有update_at字段与create_at 字段
+- 每个表必须要有update_time字段与create_time 字段,datetime
 - 主键避免使用id,最好使用表名_id
 - 所有表名为单数
 - 所有表需要有表注释与字段注释
@@ -116,7 +116,6 @@
 字段值 |字段名 |例子| 备注
 ---|---|---|---
 _status | 状态值 | audit_status |注释: 字段注释:1=状态1,2=状态2,3=状态3; 一般以1为起始值,0为全部值; 
-_enable |开关值| order_enable |确定是bool值时使用
 _list |数组| image_list|
 _at| 时间类型|create_at|时间(字段类型timestamp)|
 _time|时间类型|create_time|时间戳(字段类型 int)| 
