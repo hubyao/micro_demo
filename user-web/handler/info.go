@@ -2,22 +2,13 @@ package handler
 
 import (
 	"context"
-	"fmt"
-	"log"
 	"micro_demo/comm/xhttp"
 	bpUser "micro_demo/proto/user"
 
+	log "github.com/micro/go-micro/v2/logger"
+
 	"github.com/gin-gonic/gin"
 )
-
-// QueryUserByNameReq ...
-type QueryUserByNameReq struct {
-	UserName string `form:"user_name" json:"user_name"`
-}
-
-type QueryUserByNameRsp struct {
-	Pwd string `json:"pwd"`
-}
 
 // QueryUserByName 查询名字
 func QueryUserByName(c *gin.Context) {
@@ -29,8 +20,6 @@ func QueryUserByName(c *gin.Context) {
 		xhttp.SendJsonResponse(c, err, nil)
 		return
 	}
-
-	fmt.Println("req ", req)
 
 	// 调用后台服务
 	data, err := UserPbClient.QueryUserByName(context.TODO(), &bpUser.Request{
@@ -45,4 +34,13 @@ func QueryUserByName(c *gin.Context) {
 
 	rsp.Pwd = data.User.Pwd
 	xhttp.SendJsonResponse(c, nil, rsp)
+}
+
+// QueryUserByNameReq ...
+type QueryUserByNameReq struct {
+	UserName string `form:"user_name" json:"user_name"`
+}
+
+type QueryUserByNameRsp struct {
+	Pwd string `json:"pwd"`
 }

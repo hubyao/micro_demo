@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"fmt"
 	"micro_demo/comm/xhttp"
 	bpUser "micro_demo/proto/user"
 
@@ -45,7 +44,6 @@ func GetName(c *gin.Context) {
 		// return
 	}
 
-	fmt.Println("req ", req)
 	rsp.Name = req.Name
 
 	xhttp.SendJsonResponse(c, nil, rsp)
