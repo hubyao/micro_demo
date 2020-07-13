@@ -59,7 +59,7 @@ func NewLogger(l zapcore.Level) (lg *zap.SugaredLogger, err error) {
 func SetLogger(l zapcore.Level) (*zap.Logger, error) {
 
 	lowPriority := zap.LevelEnablerFunc(func(lev zapcore.Level) bool {
-		return lev < zap.ErrorLevel && lev >= zap.DebugLevel
+		return  lev >= zap.DebugLevel
 	})
 
 	// err
@@ -71,8 +71,8 @@ func SetLogger(l zapcore.Level) (*zap.Logger, error) {
 
 	// 判断是否是linux环境
 	if runtime.GOOS == "linux" {
-		lowFilename = "" // TODO: 日志会自动输出到stdout.log文件中如果日志地址重新设置stdout.log会出现重复输出
-		highFilename = "err.log"
+		lowFilename = "./.log/all.log" // TODO: 日志会自动输出到stdout.log文件中如果日志地址重新设置stdout.log会出现重复输出
+		highFilename = "./.log/err.log"
 	}
 
 	highCore, err := setLumberjack(highFilename, highPriority)
