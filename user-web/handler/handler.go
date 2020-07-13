@@ -1,8 +1,8 @@
 package handler
 
 import (
-	"fmt"
-	"micro_demo/comm/logging"
+	// "fmt"
+	// "micro_demo/comm/logging"
 	"micro_demo/comm/xhttp"
 	bpUser "micro_demo/proto/user"
 
@@ -46,10 +46,10 @@ func GetName(c *gin.Context) {
 		return
 	}
 
-	fmt.Println("debug_info")
+	// fmt.Println("debug_info")
 
-	logging.Logger().Errorf("debug_info %v", "xxxxx")
-	fmt.Println("debug_info")
+	// logging.Logger().Errorf("debug_info %v", "xxxxx")
+	// fmt.Println("debug_info")
 
 	rsp.Name = req.Name
 
