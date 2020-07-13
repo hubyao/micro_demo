@@ -4,8 +4,8 @@ import (
 	"context"
 
 	log "github.com/micro/go-micro/v2/logger"
-	s "micro_demo/proto/user"
-	us "micro_demo/user-srv/model/user"
+	pbUser "micro_demo/proto/user"
+	modelUser "micro_demo/user-srv/model/user"
 )
 
 type Service struct{}
@@ -25,20 +25,24 @@ func Init() {
 }
 
 // QueryUserByName 通过参数中的名字返回用户
-func (e *Service) QueryUserByName(ctx context.Context, req *s.Request, rsp *s.Response) error {
+func (e *Service) QueryUserByName(ctx context.Context, req *pbUser.AddUserReq, rsp *pbUser.AddUserRsp) error {
+	err := userService.AddUser(modelUser.User{
+		
+	})
 	
-	user, err := userService.QueryUserByName(req.UserName)
-	if err != nil {
-		rsp.BaseResponse.Success = false
-		rsp.BaseResponse.Error= &s.Error{
-			Code:   500,
-			Message: err.Error(),
-		}
 
-		return nil
-	}
+	// user, err := userService.QueryUserByName(req.UserName)
+	// if err != nil {
+	// 	rsp.BaseResponse.Success = false
+	// 	rsp.BaseResponse.Error= &s.Error{
+	// 		Code:   500,
+	// 		Message: err.Error(),
+	// 	}
 
-	rsp.User = user
-	rsp.BaseResponse.Success = true
-	return nil
+	// 	return nil
+	// }
+
+	// rsp.User = user
+	// rsp.BaseResponse.Success = true
+	// return nil
 }
