@@ -16,10 +16,12 @@ require (
 	golang.org/x/tools v0.0.0-20200713011307-fd294ab11aed // indirect
 	honnef.co/go/tools v0.0.1-2020.1.4 // indirect
 	micro_demo/basic v0.0.0-00010101000000-000000000000
+	micro_demo/comm v0.0.0-00010101000000-000000000000
 	micro_demo/proto v0.0.0-00010101000000-000000000000
 )
 
 replace (
 	micro_demo/basic => ../basic
+	micro_demo/comm => ../comm
 	micro_demo/proto => ../proto
 )
