@@ -2,23 +2,20 @@ package user
 
 import (
 	"fmt"
-	"log"
+	//"log"
 	"sync"
 
 	"micro_demo/basic/db/xgorm"
-	proto "micro_demo/proto/user"
+	//proto "micro_demo/proto/user"
 	"micro_demo/comm/logging"
 	"time"
 )
 
 var (
-	s *service
+	s *User
 	m sync.RWMutex
 )
 
-// service 服务
-type service struct {
-}
 
 // Service 用户服务类
 type Service interface {
@@ -47,7 +44,7 @@ func Init() {
 		return
 	}
 
-	s = &service{}
+	s = &User{}
 
 	//TODO: 同步数据库
 	xgorm.GetDB().AutoMigrate(&User{})
