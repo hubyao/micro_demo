@@ -30,6 +30,7 @@ var (
 	env string  // 环境
 )
 
+// Service ...
 type Service struct{}
 
 
