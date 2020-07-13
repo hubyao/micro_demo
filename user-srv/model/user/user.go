@@ -24,8 +24,8 @@ type service struct {
 type Service interface {
 	AddUser(data User)(err error) // 添加用户信息
 	UpdateUser(data User)(err error) // 更新用户信息
-	GetFromUId(uid int64) (result *User, err error) // 根据uid获取用户信息 
-	GetBatchFromUId(uids []int64) (results []*User, err error) // 根据uid批量获取用户信息
+	GetFromUId(uid uint64) (result *User, err error) // 根据uid获取用户信息
+	GetBatchFromUId(uids []uint64) (results []*User, err error) // 根据uid批量获取用户信息
 	GetFromPhone(phone string) (result *User, err error) // 根据手机号获取用户信息
 	GetBatchFromPhone(phones []string) (results []*User, err error) // 根据手机号批量获取用户信息
 }
@@ -57,7 +57,7 @@ func Init() {
 
 // User ...
 type User struct {
-	UId        int64     `gorm:"primary_key;column:uid;type:bigint(20);not null" json:"-"`
+	UId        uint64     `gorm:"primary_key;column:uid;type:bigint(20);not null" json:"-"`
 	Phone      string    `gorm:"unique;column:phone;type:varchar(255)" json:"phone"` // 手机号
 	Nick       string    `gorm:"column:nick;type:varchar(255)" json:"nick"`          // 昵称
 	Createtime time.Time `gorm:"column:createtime;type:datetime" json:"createtime"`
@@ -91,7 +91,7 @@ func (u *User)UpdateUser(data User)(err error){
 }
 
 // GetFromUId 通过uid获取用户
-func (u *User) GetFromUId(uid int64) (result *User, err error) {
+func (u *User) GetFromUId(uid uint64) (result *User, err error) {
 	result = &User{}
 	err = xgorm.GetDB().Table(u.TableName()).Where("uid = ?", uid).Find(result).Error
 	if err !=nil {
@@ -102,7 +102,7 @@ func (u *User) GetFromUId(uid int64) (result *User, err error) {
 }
 
 // GetBatchFromUId 批量唯一主键查找
-func (u *User) GetBatchFromUId(uids []int64) (results []*User, err error) {
+func (u *User) GetBatchFromUId(uids []uint64) (results []*User, err error) {
 	err = xgorm.GetDB().Table(u.TableName()).Where("uid IN (?)", uids).Find(&results).Error
 	if err !=nil {
 		logging.Logger().Error(err)	
