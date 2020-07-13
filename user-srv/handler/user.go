@@ -26,18 +26,19 @@ func Init() {
 
 // QueryUserByName 通过参数中的名字返回用户
 func (e *Service) QueryUserByName(ctx context.Context, req *s.Request, rsp *s.Response) error {
+	
 	user, err := userService.QueryUserByName(req.UserName)
 	if err != nil {
-		rsp.Success = false
-		rsp.Error = &s.Error{
+		rsp.BaseResponse.Success = false
+		rsp.BaseResponse.Error= &s.Error{
 			Code:   500,
-			Detail: err.Error(),
+			Message: err.Error(),
 		}
 
 		return nil
 	}
 
 	rsp.User = user
-	rsp.Success = true
+	rsp.BaseResponse.Success = true
 	return nil
 }
