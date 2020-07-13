@@ -563,7 +563,10 @@ github.com/micro/go-micro v1.18.1-0.20200110215436-f50a50eeb36a h1:CP1i91wQt3uzN
 github.com/micro/go-micro v1.18.1-0.20200110215436-f50a50eeb36a/go.mod h1:O3/hy71/lsUfN2120/OqZmIloCPJERlnccdbaLtE85A=
 github.com/micro/go-micro/v2 v2.9.1 h1:+S9koIrNWARjpP6k2TZ7kt0uC9zUJtNXzIdZTZRms7Q=
 github.com/micro/go-micro/v2 v2.9.1/go.mod h1:x55ZM3Puy0FyvvkR3e0ha0xsE9DFwfPSUMWAIbFY0SY=
+github.com/micro/go-plugins v1.5.1 h1:swcFD7ynCTUo98APqIEIbPu2XMd6yVGTnI8PqdnCwOQ=
 github.com/micro/go-plugins v1.5.1/go.mod h1:jcxejzJCAMH731cQHbS/hncyKe0rxAbzKkibj8glad4=
+github.com/micro/go-plugins/config/source/grpc/v2 v2.9.1 h1:hSBSL5D0oFYDpe4f7eT0pMmwY241s2MoTUTZAjb1ZBU=
+github.com/micro/go-plugins/config/source/grpc/v2 v2.9.1/go.mod h1:76r8DrlUZRwBLhJRP66jggwO7G1e+6G7RNq/hgL9YN4=
 github.com/micro/mdns v0.3.0/go.mod h1:KJ0dW7KmicXU2BV++qkLlmHYcVv7/hHnbtguSWt9Aoc=
 github.com/micro/micro v1.16.0/go.mod h1:TO5Ng0KidbfRYIxVM4Q3deZ0A+qwRyP9WeXp+k2fWNA=
 github.com/micro/micro v1.18.0/go.mod h1:F7X6NCpW9Jh5w/qQJhh9/aLfcY+oMO/oWeLg3yrURbI=

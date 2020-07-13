@@ -1,3 +1,4 @@
+# 正式环境
 micro:
   etcd:
     enabled: true
@@ -24,5 +25,3 @@ micro:
     name: mu.micro.book.web.user
     address: 127.0.0.1
     port: 10000
-  global: 
-    env: loc

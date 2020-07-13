@@ -11,6 +11,8 @@ import (
 func initMysql() {
 	var err error
 
+
+	
 	// 创建连接
 	mysqlDB, err = sql.Open("mysql", config.GetMysqlConfig().GetURL())
 	if err != nil {

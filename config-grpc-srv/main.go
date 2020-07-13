@@ -8,24 +8,63 @@ import (
 	"strings"
 	"sync"
 	"time"
-
+	"flag"
 	"github.com/micro/go-micro/v2/config"
 	"github.com/micro/go-micro/v2/config/source/file"
 	log "github.com/micro/go-micro/v2/logger"
 	proto "github.com/micro/go-plugins/config/source/grpc/v2/proto"
 	grpc2 "google.golang.org/grpc"
+	"micro_demo/basic/common"
+	"os"
+	// "micro_demo/basic/common"
 )
 
 var (
 	mux        sync.RWMutex
 	configMaps = make(map[string]*proto.ChangeSet)
 	// 根据需要改成可配置的app列表
-	apps = []string{"micro"}
+	apps = []string{"micro_loc"}
+)
+
+var (
+	env string  // 环境
 )
 
 type Service struct{}
 
+
+// flagParse 参数解析
+func flagParseEnv(){
+	// 获取命令行参数
+    flag.StringVar(&env, "env", "", "环境, 可选项 loc,dev,prod")
+	flag.Parse()
+	
+	if env == ""{
+		env = common.EnvLoc
+	}
+	
+	switch env {
+		case common.EnvLoc:
+			apps = []string{"micro_loc"}
+		case common.EnvDev:
+			apps = []string{"micro_dev"}
+		case common.EnvProd:
+			apps = []string{"micro_prod"}
+		default:
+			fmt.Println("env只支持 loc,dev,prod")
+			os.Exit(1)
+	}
+	
+	log.Infof("启动环境: %v",env)
+
+	
+}
+
+
 func main() {
+	// 解析环境
+	flagParseEnv()
+
 	// 灾难恢复
 	defer func() {
 		if r := recover(); r != nil {
@@ -55,6 +94,7 @@ func main() {
 	}
 }
 
+// Read 读取文件
 func (s Service) Read(ctx context.Context, req *proto.ReadRequest) (rsp *proto.ReadResponse, err error) {
 	appName := parsePath(req.Path)
 
@@ -64,6 +104,7 @@ func (s Service) Read(ctx context.Context, req *proto.ReadRequest) (rsp *proto.R
 	return
 }
 
+// Watch 监听文件
 func (s Service) Watch(req *proto.WatchRequest, server proto.Source_WatchServer) (err error) {
 	appName := parsePath(req.Path)
 	rsp := &proto.WatchResponse{
@@ -77,6 +118,7 @@ func (s Service) Watch(req *proto.WatchRequest, server proto.Source_WatchServer)
 	return
 }
 
+// loadAndWatchConfigFile 加载文件
 func loadAndWatchConfigFile() (err error) {
 	// 加载每个应用的配置文件
 	for _, app := range apps {
@@ -110,6 +152,7 @@ func loadAndWatchConfigFile() (err error) {
 	return
 }
 
+// getConfig 获取文件
 func getConfig(appName string) *proto.ChangeSet {
 	bytes := config.Get(appName).Bytes()
 
@@ -122,6 +165,8 @@ func getConfig(appName string) *proto.ChangeSet {
 		Timestamp: time.Now().Unix()}
 }
 
+
+// parsePath 解析地址
 func parsePath(path string) (appName string) {
 	paths := strings.Split(path, "/")
 

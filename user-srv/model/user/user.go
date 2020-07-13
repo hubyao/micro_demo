@@ -5,7 +5,7 @@ import (
 	"log"
 	"sync"
 
-	"micro_demo/basic/db/xgorm"
+	"micro_demo/comm/xdb/db/xgorm"
 	proto "micro_demo/proto/user"
 )
 

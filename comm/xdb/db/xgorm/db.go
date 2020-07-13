@@ -10,9 +10,9 @@ import (
 	log "github.com/micro/go-micro/v2/logger"
 
 	"micro_demo/basic"
+	"time"
 
 	"github.com/jinzhu/gorm"
-	"github.com/micro/go-micro/v2/util/log"
 )
 
 var (
@@ -26,19 +26,44 @@ func init() {
 	basic.Register(initDB)
 }
 
+
+type dbCfg struct {
+	Mysql Mysql `json："mysql"`
+}
+
+// Mysql mySQL 配置
+type Mysql struct {
+	URL               string `json:"url"`
+	Enable            bool   `json:"enabled"`
+	MaxIdleConnection int    `json:"maxIdleConnection"`
+	MaxOpenConnection int    `json:"maxOpenConnection"`
+	ConnMaxLifetime time.Duration    `json:"connMaxLifetime"`
+}
 // Init ...
 func initDB() {
 
+
+	log.Info("[initMysql] 初始化Mysql")
+
+	c := config.C()
+	cfg := &dbCfg{}
+
+	err := c.App("db", cfg)
+	if err != nil {
+		log.Warnf("[initMysql] %s", err)
+	}
+
+
 	dbConf = conf.Database{}
-	xdb, err := gorm.Open("mysql", config.GetMysqlConfig().GetURL())
+	xdb, err := gorm.Open("mysql", cfg.Mysql.URL)
 	if err != nil {
 		log.Fatal(err)
 		return
 	}
 
-	xdb.DB().SetMaxOpenConns(dbConf.MaxOpenConns)
-	xdb.DB().SetMaxIdleConns(dbConf.MaxIdleConns)
-	xdb.DB().SetConnMaxLifetime(dbConf.ConnMaxLifetime)
+	xdb.DB().SetMaxOpenConns(cfg.Mysql.MaxOpenConnection)
+	xdb.DB().SetMaxIdleConns(cfg.Mysql.MaxIdleConnection)
+	xdb.DB().SetConnMaxLifetime(cfg.Mysql.ConnMaxLifetime)
 	xdb.SingularTable(true)
 	db = xdb
 }
