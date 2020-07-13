@@ -9,3 +9,4 @@ pkg/
 *.pyc
 *.zip
 .vscode/
+.log

@@ -1,15 +1,17 @@
 package router
 
 import (
-	"micro_demo/user-web/handler"
 
+	"micro_demo/user-web/handler"
 	"github.com/gin-gonic/gin"
+	"micro_demo/comm/xhttp/middleware"
 )
 
 // Load 加载中间件
 func Load(g *gin.Engine, mw ...gin.HandlerFunc) *gin.Engine {
 	g.Use(gin.Recovery())
 	g.Use(mw...)
+	g.Use(middleware.DetailLogger())
 
 	Handle(g)
 

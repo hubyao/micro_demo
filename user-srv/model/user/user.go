@@ -78,8 +78,6 @@ func (s *service) QueryUserByName(userName string) (ret *proto.User, err error) 
 	ret = &proto.User{}
 	o := xgorm.GetDB()
 
-	fmt.Println("嘻嘻嘻嘻嘻嘻", o)
-
 	err = o.Where("user_name = ?", userName).First(&data).Error
 
 	if err != nil {

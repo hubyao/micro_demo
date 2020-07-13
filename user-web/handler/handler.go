@@ -1,6 +1,8 @@
 package handler
 
 import (
+	// "fmt"
+	"micro_demo/comm/logging"
 	"micro_demo/comm/xhttp"
 	bpUser "micro_demo/proto/user"
 
@@ -41,8 +43,13 @@ func GetName(c *gin.Context) {
 	// 绑定数据
 	if err := c.ShouldBind(&req); err != nil {
 		xhttp.SendJsonResponse(c, err, nil)
-		// return
+		return
 	}
+
+	// fmt.Println("debug_info")
+
+	logging.Logger().Errorf("debug_info %v", "xxxxx")
+	// fmt.Println("debug_info")
 
 	rsp.Name = req.Name
 
