@@ -3,27 +3,52 @@ syntax = "proto3";
 package mu.micro.book.user.srv.service;
 
 service User {
-    rpc QueryUserByName (Request) returns (Response) {}// 
+    rpc GetFromUid (GetFromUidReq) returns (GetFromUidRsp) {}       // 根据uid获取用户信息
+    rpc GetFromPhone (GetFromPhoneReq) returns (GetFromPhoneRsp) {} // 根据手机号获取用户信息
+    rpc AddUser(AddUserReq) returns (AddUserRsp) {}                 // 添加用户
+    rpc UpdateUser (UpdateUserReq) returns (UpdateUserRsp);         // 更新用户信息
 }
 
-message user {
-    uint64 id = 1; //
-    string name = 2;
-    string pwd = 3;
-    uint64 createdTime = 4;
-    uint64 updatedTime = 5;
+message UpdateUserReq{
+    string nick =1; // 用户昵称
 }
 
-
-message Request {
-    string userID = 1;
-    string userName = 2;
-    string userPwd = 3;
-}
-
-message Response {
+message UpdateUserRsp{
     BaseResponse baseResponse = 1;
-    user user = 2;
+}
+
+message AddUserReq{
+    string nick =1;   // 用户昵称
+    string phone = 2; // 用户手机号
+}
+
+
+message AddUserRsp{
+    BaseResponse baseResponse = 1;
+}
+
+message GetFromUidReq{
+    uint64 uid =1; // 用户id
+}
+
+message GetFromUidRsp{
+    BaseResponse baseResponse = 1;
+    UserInfo userInfo = 2; // 用户信息
+}
+
+message UserInfo {
+    uint64 uid =1;      // 用户id
+    string nick =2;     // 用户昵称
+    string phone = 3;   // 用户手机号
+}
+
+message GetFromPhoneReq{
+    string phone =1; // 手机号
+}
+
+message GetFromPhoneRsp {
+    BaseResponse baseResponse = 1;
+    UserInfo userInfo = 2;
 }
 
 

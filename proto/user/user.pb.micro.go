@@ -42,7 +42,10 @@ func NewUserEndpoints() []*api.Endpoint {
 // Client API for User service
 
 type UserService interface {
-	QueryUserByName(ctx context.Context, in *Request, opts ...client.CallOption) (*Response, error)
+	GetFromUid(ctx context.Context, in *GetFromUidReq, opts ...client.CallOption) (*GetFromUidRsp, error)
+	GetFromPhone(ctx context.Context, in *GetFromPhoneReq, opts ...client.CallOption) (*GetFromPhoneRsp, error)
+	AddUser(ctx context.Context, in *AddUserReq, opts ...client.CallOption) (*AddUserRsp, error)
+	UpdateUser(ctx context.Context, in *UpdateUserReq, opts ...client.CallOption) (*UpdateUserRsp, error)
 }
 
 type userService struct {
@@ -57,9 +60,39 @@ func NewUserService(name string, c client.Client) UserService {
 	}
 }
 
-func (c *userService) QueryUserByName(ctx context.Context, in *Request, opts ...client.CallOption) (*Response, error) {
-	req := c.c.NewRequest(c.name, "User.QueryUserByName", in)
-	out := new(Response)
+func (c *userService) GetFromUid(ctx context.Context, in *GetFromUidReq, opts ...client.CallOption) (*GetFromUidRsp, error) {
+	req := c.c.NewRequest(c.name, "User.GetFromUid", in)
+	out := new(GetFromUidRsp)
+	err := c.c.Call(ctx, req, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userService) GetFromPhone(ctx context.Context, in *GetFromPhoneReq, opts ...client.CallOption) (*GetFromPhoneRsp, error) {
+	req := c.c.NewRequest(c.name, "User.GetFromPhone", in)
+	out := new(GetFromPhoneRsp)
+	err := c.c.Call(ctx, req, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userService) AddUser(ctx context.Context, in *AddUserReq, opts ...client.CallOption) (*AddUserRsp, error) {
+	req := c.c.NewRequest(c.name, "User.AddUser", in)
+	out := new(AddUserRsp)
+	err := c.c.Call(ctx, req, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userService) UpdateUser(ctx context.Context, in *UpdateUserReq, opts ...client.CallOption) (*UpdateUserRsp, error) {
+	req := c.c.NewRequest(c.name, "User.UpdateUser", in)
+	out := new(UpdateUserRsp)
 	err := c.c.Call(ctx, req, out, opts...)
 	if err != nil {
 		return nil, err
@@ -70,12 +103,18 @@ func (c *userService) QueryUserByName(ctx context.Context, in *Request, opts ...
 // Server API for User service
 
 type UserHandler interface {
-	QueryUserByName(context.Context, *Request, *Response) error
+	GetFromUid(context.Context, *GetFromUidReq, *GetFromUidRsp) error
+	GetFromPhone(context.Context, *GetFromPhoneReq, *GetFromPhoneRsp) error
+	AddUser(context.Context, *AddUserReq, *AddUserRsp) error
+	UpdateUser(context.Context, *UpdateUserReq, *UpdateUserRsp) error
 }
 
 func RegisterUserHandler(s server.Server, hdlr UserHandler, opts ...server.HandlerOption) error {
 	type user interface {
-		QueryUserByName(ctx context.Context, in *Request, out *Response) error
+		GetFromUid(ctx context.Context, in *GetFromUidReq, out *GetFromUidRsp) error
+		GetFromPhone(ctx context.Context, in *GetFromPhoneReq, out *GetFromPhoneRsp) error
+		AddUser(ctx context.Context, in *AddUserReq, out *AddUserRsp) error
+		UpdateUser(ctx context.Context, in *UpdateUserReq, out *UpdateUserRsp) error
 	}
 	type User struct {
 		user
@@ -88,6 +127,18 @@ type userHandler struct {
 	UserHandler
 }
 
-func (h *userHandler) QueryUserByName(ctx context.Context, in *Request, out *Response) error {
-	return h.UserHandler.QueryUserByName(ctx, in, out)
+func (h *userHandler) GetFromUid(ctx context.Context, in *GetFromUidReq, out *GetFromUidRsp) error {
+	return h.UserHandler.GetFromUid(ctx, in, out)
+}
+
+func (h *userHandler) GetFromPhone(ctx context.Context, in *GetFromPhoneReq, out *GetFromPhoneRsp) error {
+	return h.UserHandler.GetFromPhone(ctx, in, out)
+}
+
+func (h *userHandler) AddUser(ctx context.Context, in *AddUserReq, out *AddUserRsp) error {
+	return h.UserHandler.AddUser(ctx, in, out)
+}
+
+func (h *userHandler) UpdateUser(ctx context.Context, in *UpdateUserReq, out *UpdateUserRsp) error {
+	return h.UserHandler.UpdateUser(ctx, in, out)
 }
