@@ -1,7 +1,7 @@
 /*
  * @Author       : jianyao
  * @Date         : 2020-07-14 01:54:29
- * @LastEditTime : 2020-07-14 02:19:24
+ * @LastEditTime : 2020-07-14 03:41:26
  * @Description  : 用户model
  */ 
 
@@ -30,7 +30,7 @@ type service struct{
 // Service 用户服务类
 type Service interface {
 	// user
-	AddUser(data User)(err error) 								// 添加用户信息
+	AddUser(data *User)(err error) 								// 添加用户信息
 	UpdateUser(data User)(err error) 							// 更新用户信息
 	GetFromUId(uid uint64) (result *User, err error) 			// 根据uid获取用户信息
 	GetBatchFromUId(uids []uint64) (results []*User, err error) // 根据uid批量获取用户信息
