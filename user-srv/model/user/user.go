@@ -1,7 +1,7 @@
 /*
  * @Author       : jianyao
  * @Date         : 2020-07-14 02:05:17
- * @LastEditTime : 2020-07-14 02:06:34
+ * @LastEditTime : 2020-07-14 03:41:07
  * @Description  : file content
  */ 
 
@@ -29,7 +29,7 @@ func (u *User) TableName() string {
 
 
 // Add  添加
-func (s *service)AddUser(data User)(err error){
+func (s *service)AddUser(data *User)(err error){
 	err = xgorm.GetDB().Table((&User{}).TableName()).Create(data).Error
 	if err !=nil {
 		logging.Logger().Error(err)	

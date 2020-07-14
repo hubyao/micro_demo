@@ -32,12 +32,14 @@ func (e *Service) AddUser(ctx context.Context, req *pbUser.AddUserReq, rsp *pbUs
 			Success: true,
 			Error:   nil,
 		},
+		Uid: 0,
 	}
-
-	err := userService.AddUser(modelUser.User{
+	data := &modelUser.User{
 		Phone:      req.Phone,
 		Nick:       req.Nick,
-	})
+	}
+
+	err := userService.AddUser(data)
 
 	if err != nil {
 		logging.Logger().Error(err)
@@ -48,6 +50,8 @@ func (e *Service) AddUser(ctx context.Context, req *pbUser.AddUserReq, rsp *pbUs
 		}
 	}
 
+	rsp.Uid = data.UId
+	
 	return nil
 }
 
