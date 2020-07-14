@@ -9,9 +9,15 @@ import (
 
 
 func Sms(c *gin.Context) {
-	req := SmsReq{}
-	rsp := SmsRsp{}
+	req := smsReq{}
+	rsp := smsRsp{}
 	var err error
+
+	// 绑定数据
+	if err := c.ShouldBind(&req); err != nil {
+		xhttp.SendJsonResponse(c, err, nil)
+		return
+	}
 
 	// TODO: 验证手机号
 	// TODO: 限制发送频率30秒
@@ -31,11 +37,11 @@ func SendSms(phone string,smsType string) error  {
 }
 
 
-type SmsReq struct {
+type smsReq struct {
 	Phone string `json:"phone" form:"phone"` // 手机号
 	SmsType  string `json:"sms_type" form:"sms_type"` // 短信类型:login=登陆
 }
 
-type SmsRsp struct {
+type smsRsp struct {
 
 }

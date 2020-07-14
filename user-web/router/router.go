@@ -22,8 +22,8 @@ func Handle(g *gin.Engine) {
 
 	u := g.Group("/v1/user")
 	{
-		u.POST("sms",handler.Sms) 					// 发送验证码
-		u.POST("/phone/login",handler.PhoneLogin) 	// 手机号登陆
-		u.POST("/wechat/login",handler.PhoneLogin)  					// 微信登陆
+		u.POST("sms",handler.Sms) 					 // 发送验证码
+		u.POST("/phone/login",handler.PhoneLogin) 	 // 手机号登陆
+		u.POST("/wechat/login",handler.WechatLogin)    // 微信登陆
 	}
 }

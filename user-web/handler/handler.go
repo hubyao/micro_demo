@@ -7,11 +7,6 @@ import (
 )
 
 
-// GetNameRsp 响应
-type GetNameRsp struct {
-	Name string `json:"cname"`
-}
-
 var (
 	UserPbClient bpUser.UserService
 )
