@@ -11,11 +11,11 @@ service User {
 
     // token
     rpc GenerateToken(GenerateTokenReq)returns (GenerateTokenRsp){}  // 生成token
-    rpc ParseToken(ParseTokenReq)returns (ParseTokenRsp){} 				  // 解析token
+    rpc ParseToken(ParseTokenReq)returns (ParseTokenRsp){} 		     // 解析token
 }
 
 message GenerateTokenReq {
-    uint64 userId = 1;
+    uint64 uid = 1;
 }
 
 message GenerateTokenRsp {
@@ -29,7 +29,7 @@ message ParseTokenReq {
 
 message ParseTokenRsp {
   BaseResponse baseResponse = 1;
-  uint64 userId = 2;
+  uint64 uid = 2;
 }
 
 
@@ -49,6 +49,7 @@ message AddUserReq{
 
 message AddUserRsp{
     BaseResponse baseResponse = 1;
+    uint64 uid = 2; // 用户id
 }
 
 message GetFromUidReq{
