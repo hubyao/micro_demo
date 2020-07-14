@@ -1,58 +1,19 @@
+/*
+ * @Author       : jianyao
+ * @Date         : 2020-07-14 02:05:17
+ * @LastEditTime : 2020-07-14 02:06:34
+ * @Description  : file content
+ */ 
+
 package user
 
-import (
-	"fmt"
-	//"log"
-	"sync"
-
-	"micro_demo/basic/db/xgorm"
-	//proto "micro_demo/proto/user"
+import(
 	"micro_demo/comm/logging"
 	"time"
+	"micro_demo/basic/db/xgorm"
 )
 
-var (
-	s *User
-	m sync.RWMutex
-)
-
-
-// Service 用户服务类
-type Service interface {
-	AddUser(data User)(err error) // 添加用户信息
-	UpdateUser(data User)(err error) // 更新用户信息
-	GetFromUId(uid uint64) (result *User, err error) // 根据uid获取用户信息
-	GetBatchFromUId(uids []uint64) (results []*User, err error) // 根据uid批量获取用户信息
-	GetFromPhone(phone string) (result *User, err error) // 根据手机号获取用户信息
-	GetBatchFromPhone(phones []string) (results []*User, err error) // 根据手机号批量获取用户信息
-}
-
-// GetService 获取服务类
-func GetService() (Service, error) {
-	if s == nil {
-		return nil, fmt.Errorf("[GetService] GetService 未初始化")
-	}
-	return s, nil
-}
-
-// Init 初始化用户服务层
-func Init() {
-	m.Lock()
-	defer m.Unlock()
-
-	if s != nil {
-		return
-	}
-
-	s = &User{}
-
-	//TODO: 同步数据库
-	xgorm.GetDB().AutoMigrate(&User{})
-}
-
-
-
-// User ...
+ // User ...
 type User struct {
 	UId        uint64     `gorm:"primary_key;column:uid;type:bigint(20);not null" json:"-"`
 	Phone      string    `gorm:"unique;column:phone;type:varchar(255)" json:"phone"` // 手机号
@@ -68,8 +29,8 @@ func (u *User) TableName() string {
 
 
 // Add  添加
-func (u *User)AddUser(data User)(err error){
-	err = xgorm.GetDB().Table(u.TableName()).Create(data).Error
+func (s *service)AddUser(data User)(err error){
+	err = xgorm.GetDB().Table((&User{}).TableName()).Create(data).Error
 	if err !=nil {
 		logging.Logger().Error(err)	
 	}
@@ -78,8 +39,8 @@ func (u *User)AddUser(data User)(err error){
 }
 
 // Update 更新
-func (u *User)UpdateUser(data User)(err error){
-	err = xgorm.GetDB().Table(u.TableName()).Update(data).Error
+func (s *service)UpdateUser(data User)(err error){
+	err = xgorm.GetDB().Table((&User{}).TableName()).Update(data).Error
 	if err !=nil {
 		logging.Logger().Error(err)	
 	}
@@ -88,9 +49,9 @@ func (u *User)UpdateUser(data User)(err error){
 }
 
 // GetFromUId 通过uid获取用户
-func (u *User) GetFromUId(uid uint64) (result *User, err error) {
+func (s *service) GetFromUId(uid uint64) (result *User, err error) {
 	result = &User{}
-	err = xgorm.GetDB().Table(u.TableName()).Where("uid = ?", uid).Find(result).Error
+	err = xgorm.GetDB().Table((&User{}).TableName()).Where("uid = ?", uid).Find(result).Error
 	if err !=nil {
 		logging.Logger().Error(err)	
 	}
@@ -99,8 +60,8 @@ func (u *User) GetFromUId(uid uint64) (result *User, err error) {
 }
 
 // GetBatchFromUId 批量唯一主键查找
-func (u *User) GetBatchFromUId(uids []uint64) (results []*User, err error) {
-	err = xgorm.GetDB().Table(u.TableName()).Where("uid IN (?)", uids).Find(&results).Error
+func (s *service) GetBatchFromUId(uids []uint64) (results []*User, err error) {
+	err = xgorm.GetDB().Table((&User{}).TableName()).Where("uid IN (?)", uids).Find(&results).Error
 	if err !=nil {
 		logging.Logger().Error(err)	
 	}
@@ -110,10 +71,10 @@ func (u *User) GetBatchFromUId(uids []uint64) (results []*User, err error) {
 }
 
 // GetFromPhone 通过phone获取用户
-func (u *User) GetFromPhone(phone string) (result *User, err error) {
+func (s *service) GetFromPhone(phone string) (result *User, err error) {
 	result = &User{}
 	
-	err = xgorm.GetDB().Table(u.TableName()).Where("phone = ?", phone).Find(result).Error
+	err = xgorm.GetDB().Table((&User{}).TableName()).Where("phone = ?", phone).Find(result).Error
 	if err !=nil {
 		logging.Logger().Error(err)	
 	}
@@ -122,8 +83,8 @@ func (u *User) GetFromPhone(phone string) (result *User, err error) {
 }
 
 // GetBatchFromPhone 批量手机号查找 
-func (u *User) GetBatchFromPhone(phones []string) (results []*User, err error) {
-	err = xgorm.GetDB().Table(u.TableName()).Where("phone IN (?)", phones).Find(&results).Error
+func (s *service) GetBatchFromPhone(phones []string) (results []*User, err error) {
+	err = xgorm.GetDB().Table((&User{}).TableName()).Where("phone IN (?)", phones).Find(&results).Error
 	if err !=nil {
 		logging.Logger().Error(err)	
 	}
