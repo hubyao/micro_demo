@@ -56,6 +56,33 @@ func (e *Service) AddUser(ctx context.Context, req *pbUser.AddUserReq, rsp *pbUs
 }
 
 
+
+
+// UpdateUser 更新用户信息
+func (e *Service) UpdateUser(ctx context.Context, req *pbUser.UpdateUserReq, rsp *pbUser.UpdateUserRsp) error {
+	rsp = &pbUser.UpdateUserRsp{
+		BaseResponse: &pbUser.BaseResponse{
+			Success: true,
+			Error:   nil,
+		},
+	}
+
+	err := userService.UpdateUser(modelUser.User{
+		Nick:       req.Nick,
+	})
+
+	if err != nil {
+		logging.Logger().Error(err)
+		rsp.BaseResponse.Success = false
+		rsp.BaseResponse.Error = &pbUser.Error{
+			Code:    500,
+			Message: err.Error(),
+		}
+	}
+
+	return nil
+}
+
 // GetFromUid 根据用户id获取信息
 func (e *Service) GetFromUid(ctx context.Context, req *pbUser.GetFromUidReq, rsp *pbUser.GetFromUidRsp) error {
 	rsp = &pbUser.GetFromUidRsp{
@@ -124,27 +151,5 @@ func (e *Service) GetFromPhone(ctx context.Context, req *pbUser.GetFromPhoneReq,
 	return nil
 }
 
-// UpdateUser 更新用户信息
-func (e *Service) UpdateUser(ctx context.Context, req *pbUser.UpdateUserReq, rsp *pbUser.UpdateUserRsp) error {
-	rsp = &pbUser.UpdateUserRsp{
-		BaseResponse: &pbUser.BaseResponse{
-			Success: true,
-			Error:   nil,
-		},
-	}
 
-	err := userService.AddUser(modelUser.User{
-		Nick:       req.Nick,
-	})
 
-	if err != nil {
-		logging.Logger().Error(err)
-		rsp.BaseResponse.Success = false
-		rsp.BaseResponse.Error = &pbUser.Error{
-			Code:    500,
-			Message: err.Error(),
-		}
-	}
-
-	return nil
-}

@@ -1,10 +1,9 @@
 package router
 
 import (
-
-	"micro_demo/user-web/handler"
 	"github.com/gin-gonic/gin"
 	"micro_demo/comm/xhttp/middleware"
+	"micro_demo/user-web/handler"
 )
 
 // Load 加载中间件
@@ -23,7 +22,8 @@ func Handle(g *gin.Engine) {
 
 	u := g.Group("/v1/user")
 	{
-		u.GET("name", handler.GetName)
-		u.GET("info", handler.QueryUserByName)
+		u.POST("sms",handler.Sms) 					// 发送验证码
+		u.POST("/phone/login",handler.PhoneLogin) 	// 手机号登陆
+		u.POST("/wechat/login",handler.PhoneLogin)  					// 微信登陆
 	}
 }
