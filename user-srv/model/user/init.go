@@ -63,7 +63,7 @@ func Init() {
 	s = &service{}
 
 	//TODO: 同步数据库
-	xgorm.GetDB().AutoMigrate(&User{})
+	xgorm.GetDB().AutoMigrate(&User{},&UserOauth{})
 }
 
 

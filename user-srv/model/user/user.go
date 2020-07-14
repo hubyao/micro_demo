@@ -15,7 +15,7 @@ import(
 
  // User ...
 type User struct {
-	UId        uint64     `gorm:"primary_key;column:uid;type:bigint(20);not null" json:"-"`
+	UId        uint64    `gorm:"primary_key;column:uid;type:bigint(20);not null" json:"-"`
 	Phone      string    `gorm:"unique;column:phone;type:varchar(255)" json:"phone"` // 手机号
 	Nick       string    `gorm:"column:nick;type:varchar(255)" json:"nick"`          // 昵称
 	Createtime time.Time `gorm:"column:createtime;type:datetime" json:"createtime"`
@@ -39,7 +39,7 @@ func (s *service)AddUser(data *User)(err error){
 }
 
 // Update 更新
-func (s *service)UpdateUser(data User)(err error){
+func (s *service)UpdateUser(uId uint64,data User)(err error){
 	err = xgorm.GetDB().Table((&User{}).TableName()).Update(data).Error
 	if err !=nil {
 		logging.Logger().Error(err)	
