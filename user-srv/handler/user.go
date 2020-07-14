@@ -120,37 +120,99 @@ func (e *Service) GetFromUid(ctx context.Context, req *pbUser.GetFromUidReq, rsp
 
 // GetFromPhone 根据手机号获取信息
 func (e *Service) GetFromPhone(ctx context.Context, req *pbUser.GetFromPhoneReq, rsp *pbUser.GetFromPhoneRsp) error {
-	rsp = &pbUser.GetFromPhoneRsp{
+	// rsp = &pbUser.GetFromPhoneRsp{
+	// 	BaseResponse: &pbUser.BaseResponse{
+	// 		Success: true,
+	// 		Error:   nil,
+	// 	},
+	// 	UserInfo: &pbUser.UserInfo{},
+	// }
+	
+	// logging.Logger().Debug(rsp)
+	// data,err := userService.GetFromPhone(req.Phone)
+
+	// logging.Logger().Debug(data)
+	// if err != nil {
+	// 	logging.Logger().Error(err)
+	// 	rsp.BaseResponse.Success = false
+	// 	rsp.BaseResponse.Error = &pbUser.Error{
+	// 		Code:    500,
+	// 		Message: err.Error(),
+	// 	}
+	// }
+
+	// logging.Logger().Debug(rsp)
+	// if nil == data{
+	// 	logging.Logger().Debug(rsp)
+	// 	return  nil
+	// }
+	// logging.Logger().Debug(rsp)
+
+
+	
+	// rsp.UserInfo = &pbUser.UserInfo{
+	// 	Uid:   data.UId,
+	// 	Nick:  data.Nick,
+	// 	Phone: data.Phone,
+	// }
+	
+
+	// logging.Logger().Debug(rsp)
+	// return nil
+}
+
+// ParseToken 生成token 
+func (e *Service) ParseToken(ctx context.Context, req *pbUser.ParseTokenReq, rsp *pbUser.ParseTokenRsp) error {
+	rsp = &pbUser.ParseTokenRsp{
 		BaseResponse: &pbUser.BaseResponse{
 			Success: true,
 			Error:   nil,
 		},
-		UserInfo: nil,
+		Uid:0,
 	}
 
-	data,err := userService.GetFromPhone(req.Phone)
+	dataJwt ,err := userService.ParseToken(req.Token)
 	if err != nil {
-		logging.Logger().Error(err)
-		rsp.BaseResponse.Success = false
-		rsp.BaseResponse.Error = &pbUser.Error{
-			Code:    500,
-			Message: err.Error(),
-		}
+			logging.Logger().Error(err)
+			rsp.BaseResponse.Success = false
+			rsp.BaseResponse.Error = &pbUser.Error{
+				Code:    500,
+				Message: err.Error(),
+			}
 	}
-
-	if nil == data{
-		return  nil
-	}
-
-
-	rsp.UserInfo = &pbUser.UserInfo{
-		Uid:   data.UId,
-		Nick:  data.Nick,
-		Phone: data.Phone,
-	}
-
+	
+	rsp.Uid = dataJwt.UserId
 	return nil
 }
+
+
+
+// GenerateToken 生成token 
+func (e *Service) GenerateToken(ctx context.Context, req *pbUser.GenerateTokenReq, rsp *pbUser.GenerateTokenRsp) error {
+	rsp = &pbUser.GenerateTokenRsp{
+		BaseResponse: &pbUser.BaseResponse{
+			Success: true,
+			Error:   nil,
+		},
+		Token:"",
+	}
+
+	token ,err := userService.GenerateToken(req.Uid,0)
+	if err != nil {
+			logging.Logger().Error(err)
+			rsp.BaseResponse.Success = false
+			rsp.BaseResponse.Error = &pbUser.Error{
+				Code:    500,
+				Message: err.Error(),
+			}
+	}
+	
+	rsp.Token = token
+	
+	return nil
+}
+
+
 
 // UserOauthLogin 用户授权登陆
 func (e *Service) UserOauthLogin(ctx context.Context, req *pbUser.UserOauthLoginReq, rsp *pbUser.UserOauthLoginRsp) error {

@@ -6,8 +6,6 @@ require (
 	github.com/go-redis/redis v6.15.8+incompatible // indirect
 	github.com/go-sql-driver/mysql v1.5.0
 	github.com/gookit/color v1.2.6 // indirect
-	github.com/jinzhu/gorm v1.9.14 // indirect
-	github.com/micro-in-cn/starter-kit v1.18.0 // indirect
 	github.com/micro/cli/v2 v2.1.2
 	github.com/micro/go-micro/v2 v2.9.1
 	github.com/xxjwxc/public v0.0.0-20200710160137-ccf3e4f07a03 // indirect

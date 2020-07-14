@@ -1,7 +1,7 @@
 /*
  * @Author       : jianyao
  * @Date         : 2020-07-14 02:05:17
- * @LastEditTime : 2020-07-14 06:35:13
+ * @LastEditTime : 2020-07-14 08:39:04
  * @Description  : file content
  */ 
 
@@ -52,7 +52,7 @@ func (s *service)UpdateUser(data User)(err error){
 func (s *service) GetFromUId(uid uint64) (result *User, err error) {
 	result = &User{}
 	err = xgorm.GetDB().Table((&User{}).TableName()).Where("uid = ?", uid).Find(result).Error
-	if err !=nil {
+	if err !=nil && err != xgorm.ErrRecordNotFound {
 		logging.Logger().Error(err)	
 	}
 
@@ -62,7 +62,7 @@ func (s *service) GetFromUId(uid uint64) (result *User, err error) {
 // GetBatchFromUId 批量唯一主键查找
 func (s *service) GetBatchFromUId(uids []uint64) (results []*User, err error) {
 	err = xgorm.GetDB().Table((&User{}).TableName()).Where("uid IN (?)", uids).Find(&results).Error
-	if err !=nil {
+	if err !=nil && err != xgorm.ErrRecordNotFound{
 		logging.Logger().Error(err)	
 	}
 
@@ -75,7 +75,7 @@ func (s *service) GetFromPhone(phone string) (result *User, err error) {
 	result = &User{}
 	
 	err = xgorm.GetDB().Table((&User{}).TableName()).Where("phone = ?", phone).Find(result).Error
-	if err !=nil {
+	if err !=nil && err != xgorm.ErrRecordNotFound{
 		logging.Logger().Error(err)	
 	}
 
@@ -85,7 +85,7 @@ func (s *service) GetFromPhone(phone string) (result *User, err error) {
 // GetBatchFromPhone 批量手机号查找 
 func (s *service) GetBatchFromPhone(phones []string) (results []*User, err error) {
 	err = xgorm.GetDB().Table((&User{}).TableName()).Where("phone IN (?)", phones).Find(&results).Error
-	if err !=nil {
+	if err !=nil && err != xgorm.ErrRecordNotFound{
 		logging.Logger().Error(err)	
 	}
 
