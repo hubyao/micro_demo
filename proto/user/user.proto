@@ -7,11 +7,11 @@ service User {
     rpc GetFromUid (GetFromUidReq) returns (GetFromUidRsp) {}       // 根据uid获取用户信息
     rpc GetFromPhone (GetFromPhoneReq) returns (GetFromPhoneRsp) {} // 根据手机号获取用户信息
     rpc AddUser(AddUserReq) returns (AddUserRsp) {}                 // 添加用户
-    rpc UpdateUser (UpdateUserReq) returns (UpdateUserRsp);         // 更新用户信息
+    rpc UpdateUser (UpdateUserReq) returns (UpdateUserRsp){}         // 更新用户信息
 
     // token
-    rpc GenerateToken(GenerateTokenReq) (GenerateTokenRsp)  // 生成token
-    rpc ParseToken(token string) (*jwt.Claims, error) 				  // 解析token
+    rpc GenerateToken(GenerateTokenReq)returns (GenerateTokenRsp){}  // 生成token
+    rpc ParseToken(ParseTokenReq)returns (ParseTokenRsp){} 				  // 解析token
 }
 
 message GenerateTokenReq {
