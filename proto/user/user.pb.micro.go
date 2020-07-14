@@ -42,10 +42,14 @@ func NewUserEndpoints() []*api.Endpoint {
 // Client API for User service
 
 type UserService interface {
+	// user
 	GetFromUid(ctx context.Context, in *GetFromUidReq, opts ...client.CallOption) (*GetFromUidRsp, error)
 	GetFromPhone(ctx context.Context, in *GetFromPhoneReq, opts ...client.CallOption) (*GetFromPhoneRsp, error)
 	AddUser(ctx context.Context, in *AddUserReq, opts ...client.CallOption) (*AddUserRsp, error)
 	UpdateUser(ctx context.Context, in *UpdateUserReq, opts ...client.CallOption) (*UpdateUserRsp, error)
+	// token
+	GenerateToken(ctx context.Context, in *GenerateTokenReq, opts ...client.CallOption) (*GenerateTokenRsp, error)
+	ParseToken(ctx context.Context, in *ParseTokenReq, opts ...client.CallOption) (*ParseTokenRsp, error)
 }
 
 type userService struct {
@@ -100,13 +104,37 @@ func (c *userService) UpdateUser(ctx context.Context, in *UpdateUserReq, opts ..
 	return out, nil
 }
 
+func (c *userService) GenerateToken(ctx context.Context, in *GenerateTokenReq, opts ...client.CallOption) (*GenerateTokenRsp, error) {
+	req := c.c.NewRequest(c.name, "User.GenerateToken", in)
+	out := new(GenerateTokenRsp)
+	err := c.c.Call(ctx, req, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userService) ParseToken(ctx context.Context, in *ParseTokenReq, opts ...client.CallOption) (*ParseTokenRsp, error) {
+	req := c.c.NewRequest(c.name, "User.ParseToken", in)
+	out := new(ParseTokenRsp)
+	err := c.c.Call(ctx, req, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // Server API for User service
 
 type UserHandler interface {
+	// user
 	GetFromUid(context.Context, *GetFromUidReq, *GetFromUidRsp) error
 	GetFromPhone(context.Context, *GetFromPhoneReq, *GetFromPhoneRsp) error
 	AddUser(context.Context, *AddUserReq, *AddUserRsp) error
 	UpdateUser(context.Context, *UpdateUserReq, *UpdateUserRsp) error
+	// token
+	GenerateToken(context.Context, *GenerateTokenReq, *GenerateTokenRsp) error
+	ParseToken(context.Context, *ParseTokenReq, *ParseTokenRsp) error
 }
 
 func RegisterUserHandler(s server.Server, hdlr UserHandler, opts ...server.HandlerOption) error {
@@ -115,6 +143,8 @@ func RegisterUserHandler(s server.Server, hdlr UserHandler, opts ...server.Handl
 		GetFromPhone(ctx context.Context, in *GetFromPhoneReq, out *GetFromPhoneRsp) error
 		AddUser(ctx context.Context, in *AddUserReq, out *AddUserRsp) error
 		UpdateUser(ctx context.Context, in *UpdateUserReq, out *UpdateUserRsp) error
+		GenerateToken(ctx context.Context, in *GenerateTokenReq, out *GenerateTokenRsp) error
+		ParseToken(ctx context.Context, in *ParseTokenReq, out *ParseTokenRsp) error
 	}
 	type User struct {
 		user
@@ -141,4 +171,12 @@ func (h *userHandler) AddUser(ctx context.Context, in *AddUserReq, out *AddUserR
 
 func (h *userHandler) UpdateUser(ctx context.Context, in *UpdateUserReq, out *UpdateUserRsp) error {
 	return h.UserHandler.UpdateUser(ctx, in, out)
+}
+
+func (h *userHandler) GenerateToken(ctx context.Context, in *GenerateTokenReq, out *GenerateTokenRsp) error {
+	return h.UserHandler.GenerateToken(ctx, in, out)
+}
+
+func (h *userHandler) ParseToken(ctx context.Context, in *ParseTokenReq, out *ParseTokenRsp) error {
+	return h.UserHandler.ParseToken(ctx, in, out)
 }
