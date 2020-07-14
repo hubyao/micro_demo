@@ -7,15 +7,64 @@ service User {
     rpc GetFromUid (GetFromUidReq) returns (GetFromUidRsp) {}       // 根据uid获取用户信息
     rpc GetFromPhone (GetFromPhoneReq) returns (GetFromPhoneRsp) {} // 根据手机号获取用户信息
     rpc AddUser(AddUserReq) returns (AddUserRsp) {}                 // 添加用户
-    rpc UpdateUser (UpdateUserReq) returns (UpdateUserRsp){}         // 更新用户信息
+    rpc UpdateUser (UpdateUserReq) returns (UpdateUserRsp){}        // 更新用户信息
 
     // token
     rpc GenerateToken(GenerateTokenReq)returns (GenerateTokenRsp){}  // 生成token
     rpc ParseToken(ParseTokenReq)returns (ParseTokenRsp){} 		     // 解析token
+
+    // UserOauth
+    // rpc AddUserOauth(AddUserReq) returns (AddUserRsp) {}                 // 添加用户授权
+    // rpc UpdateUserOauth (UpdateUserReq) returns (UpdateUserRsp){}        // 更新用户授权
+
+    rpc UserOauthLogin (UserOauthLoginReq) returns (UserOauthLoginRsp){}  // 用户授权登陆
+
+}
+
+message UserOauthLoginReq {
+    UserOauth userOauth = 1;
+}
+
+
+message UserOauthLoginRsp {
+  BaseResponse baseResponse = 1;
+  string  token = 2;
+  uint64 uid = 3; // 用户id
+}
+
+
+message AddUserOauthReq {
+    UserOauth userOauth = 1;
+}
+
+message AddUserOauthRsp {
+   uint64 userOauthId = 1;
+}
+
+message UpdateUserOauthReq{
+   BaseResponse baseResponse = 1;
+   UserOauth userOauth = 2;
+}
+
+message UpdateUserOauthRsp{
+   BaseResponse baseResponse = 1;
+   UserOauth userOauth = 2;
+}
+
+
+message UserOauth {
+    string Platform  = 1; // 平台:wechat=微信
+	string OpenId = 2;
+	string Unionid = 3;
+	int Sex = 4;
+	string Name = 5;
+	string Avatar = 6;
+	string Sessionkey = 7;
+	uint64 UId = 8; // 用户id
 }
 
 message GenerateTokenReq {
-    uint64 uid = 1;
+    uint64 uid = 1; // 用户id
 }
 
 message GenerateTokenRsp {
@@ -29,7 +78,7 @@ message ParseTokenReq {
 
 message ParseTokenRsp {
   BaseResponse baseResponse = 1;
-  uint64 uid = 2;
+  uint64 uid = 2; // 用户id
 }
 
 
