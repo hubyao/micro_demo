@@ -11,12 +11,19 @@ import (
 
 // PhoneLogin 手机号登陆
 func PhoneLogin(c *gin.Context) {
-	req := PhoneLoginReq{}
-	rsp := PhoneLoginRsp{}
+	req := phoneLoginReq{}
+	rsp := phoneLoginRsp{}
 	var err error
 	var uid uint64
 
+	// 绑定数据
+	if err := c.ShouldBind(&req); err != nil {
+		xhttp.SendJsonResponse(c, err, nil)
+		return
+	}
+
 	// TODO：对验证码进行校验
+
 
 
 	rpcGetFromPhone, err := UserPbClient.GetFromPhone(context.Background(), &pbUser.GetFromPhoneReq{
@@ -80,11 +87,11 @@ func PhoneLogin(c *gin.Context) {
 	xhttp.SendJsonResponse(c, err, rsp)
 }
 
-type PhoneLoginReq struct {
+type phoneLoginReq struct {
 	Phone string `json:"phone" form:"phone"` // 手机号
 	Code  string `json:"code" form:"code"`   // 验证码
 }
 
-type PhoneLoginRsp struct {
+type phoneLoginRsp struct {
 	Token string `json:"string"`
 }

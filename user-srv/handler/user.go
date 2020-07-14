@@ -4,6 +4,7 @@ import (
 	"context"
 	"micro_demo/comm/logging"
 	log "github.com/micro/go-micro/v2/logger"
+	"micro_demo/comm/xhttp/errno"
 	pbUser "micro_demo/proto/user"
 	modelUser "micro_demo/user-srv/model/user"
 )
@@ -190,8 +191,6 @@ func (e *Service) UserOauthLogin(ctx context.Context, req *pbUser.UserOauthLogin
 		rsp.Uid = dataUserOauth.UId
 		return nil
 	}
-
-
 	
 
 	// 不存在授权
@@ -212,14 +211,21 @@ func (e *Service) UserOauthLogin(ctx context.Context, req *pbUser.UserOauthLogin
 
 	// 添加授权信息
 	err = userService.AddUserOauthr(&modelUser.UserOauth{
-	
+		Platform:    "wechat",
+		OpenId:      req.UserOauth.OpenId,
+		Unionid:     req.UserOauth.Unionid,
+		Sex:         int(req.UserOauth.Sex),
+		Name:        req.UserOauth.Name,
+		Avatar:      req.UserOauth.Avatar,
+		Sessionkey:  req.UserOauth.Sessionkey,
+		UId:         dataUser.UId,
 	})
 
 	if err != nil {
 		logging.Logger().Error(err)
 		rsp.BaseResponse.Success = false
 		rsp.BaseResponse.Error = &pbUser.Error{
-			Code:    errno.ErrUserAddUserOauth,
+			Code:    int32(errno.ErrUserAddUserOauth.Code),
 			Message: err.Error(),
 		}
 	}
