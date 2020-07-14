@@ -1,7 +1,7 @@
 /*
  * @Author       : jianyao
  * @Date         : 2020-07-14 02:05:17
- * @LastEditTime : 2020-07-14 08:39:04
+ * @LastEditTime : 2020-07-14 10:22:42
  * @Description  : file content
  */ 
 
@@ -9,17 +9,15 @@ package user
 
 import(
 	"micro_demo/comm/logging"
-	"time"
 	"micro_demo/basic/db/xgorm"
 )
 
  // User ...
 type User struct {
-	UId        uint64    `gorm:"primary_key;column:uid;type:bigint(20);not null" json:"-"`
-	Phone      string    `gorm:"unique;column:phone;type:varchar(255)" json:"phone"` // 手机号
+	UId        uint64    `gorm:"AUTO_INCREMENT;primary_key;column:uid;type:bigint(20);not null" json:"-"`
+	Phone      string    `gorm:"column:phone;type:varchar(255)" json:"phone"` // 手机号
 	Nick       string    `gorm:"column:nick;type:varchar(255)" json:"nick"`          // 昵称
-	Createtime time.Time `gorm:"column:createtime;type:datetime" json:"createtime"`
-	Updatetime time.Time `gorm:"column:updatetime;type:datetime" json:"updatetime"` // 更新时间
+	xgorm.BaseModel
 }
 
 // TableName get sql table name.获取数据库表名
@@ -54,9 +52,10 @@ func (s *service) GetFromUId(uid uint64) (result *User, err error) {
 	err = xgorm.GetDB().Table((&User{}).TableName()).Where("uid = ?", uid).Find(result).Error
 	if err !=nil && err != xgorm.ErrRecordNotFound {
 		logging.Logger().Error(err)	
+		return result ,err
 	}
 
-	return
+	return result ,nil
 }
 
 // GetBatchFromUId 批量唯一主键查找
@@ -77,9 +76,10 @@ func (s *service) GetFromPhone(phone string) (result *User, err error) {
 	err = xgorm.GetDB().Table((&User{}).TableName()).Where("phone = ?", phone).Find(result).Error
 	if err !=nil && err != xgorm.ErrRecordNotFound{
 		logging.Logger().Error(err)	
+		return result ,err
 	}
 
-	return
+	return result ,nil
 }
 
 // GetBatchFromPhone 批量手机号查找 

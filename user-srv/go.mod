@@ -18,6 +18,7 @@ require (
 )
 
 replace (
+	google.golang.org/grpc => google.golang.org/grpc v1.26.0
 	micro_demo/basic => ../basic
 	micro_demo/comm => ../comm
 	micro_demo/proto => ../proto

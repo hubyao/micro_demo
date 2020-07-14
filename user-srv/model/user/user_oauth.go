@@ -1,9 +1,15 @@
+/*
+ * @Author       : jianyao
+ * @Date         : 2020-07-14 09:09:53
+ * @LastEditTime : 2020-07-14 10:34:12
+ * @Description  : file content
+ */ 
 package user
 
 import (
 	"micro_demo/basic/db/xgorm"
 	"micro_demo/comm/logging"
-	"time"
+	// "time"
 )
 
 const (
@@ -22,8 +28,7 @@ type UserOauth struct {
 	Avatar      string
 	Sessionkey  string
 	UId         uint64    `gorm:"column:uid;comment:'用户id'" json:"uid"`
-	Createtime  time.Time `gorm:"column:createtime;type:datetime;comment:'创建时间'" json:"createtime"`
-	Updatetime  time.Time `gorm:"column:updatetime;type:datetime;comment:'更新时间'" json:"updatetime"` // 更新时间
+	xgorm.BaseModel
 }
 
 func (uo *UserOauth) TableName() string {
@@ -53,12 +58,14 @@ func (s *service) UpdateUserOauth(data UserOauth) (err error) {
 // GetUserOauthByPlatformWechat 获取微信平台的数据
 func (s *service) GetUserOauthByPlatformWechat(openId string) (result *UserOauth, err error) {
 	result = &UserOauth{}
-	err = xgorm.GetDB().Table((&UserOauth{}).TableName()).Where("open_id =? and platform = wechat",openId).Update(result).Error
-	if err != nil {
+	err = xgorm.GetDB().Table((&UserOauth{}).TableName()).Where(`open_id =? and platform="wechat"`,openId).Find(&result).Error
+	if err != nil && err != xgorm.ErrRecordNotFound{
 		logging.Logger().Error(err)
+		return result,err
+
 	}
 
-	return
+	return result,nil
 }
 
 
