@@ -1,3 +1,9 @@
+/*
+ * @Author       : jianyao
+ * @Date         : 2020-07-14 09:09:53
+ * @LastEditTime : 2020-07-14 10:51:07
+ * @Description  : file content
+ */ 
 package handler
 
 import (
@@ -22,11 +28,7 @@ func Sms(c *gin.Context) {
 	// TODO: 验证手机号
 	// TODO: 限制发送频率30秒
 
-
 	SendSms(req.Phone,req.SmsType)
-
-
-
 	
 	xhttp.SendJsonResponse(c, err, rsp)
 }
@@ -38,8 +40,8 @@ func SendSms(phone string,smsType string) error  {
 
 
 type smsReq struct {
-	Phone string `json:"phone" form:"phone"` // 手机号
-	SmsType  string `json:"sms_type" form:"sms_type"` // 短信类型:login=登陆
+	Phone string `json:"phone" binding:"required"` // 手机号
+	SmsType  string `json:"sms_type" binding:"required"` // 短信类型:login=登陆
 }
 
 type smsRsp struct {

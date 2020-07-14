@@ -1,3 +1,10 @@
+/*
+ * @Author       : jianyao
+ * @Date         : 2020-07-14 09:09:53
+ * @LastEditTime : 2020-07-14 10:51:32
+ * @Description  : file content
+ */ 
+ 
 package handler
 
 import (
@@ -9,12 +16,12 @@ import (
 	pbUser "micro_demo/proto/user"
 )
 
-// 微信登陆
+// WechatLogin 微信登陆
 func WechatLogin(c *gin.Context) {
 	req := wechatLoginReq{}
 	rsp := wechatLoginRsq{}
 	var err error
-
+	
 	// 绑定数据
 	if err := c.ShouldBind(&req); err != nil {
 		xhttp.SendJsonResponse(c, err, nil)
@@ -42,7 +49,10 @@ func WechatLogin(c *gin.Context) {
 		logging.Logger().Error(err)
 		xhttp.SendJsonResponse(c,
 			errno.Errno{int(rpcUserOauthLogin.BaseResponse.Error.Code),
-				rpcUserOauthLogin.BaseResponse.Error.Message} , rsp)
+				rpcUserOauthLogin.BaseResponse.Error.Message} , 
+				rsp)
+				
+		return
 	}
 
 
@@ -52,11 +62,11 @@ func WechatLogin(c *gin.Context) {
 }
 
 type wechatLoginReq struct {
-	Openid   string `json:"openid" json:"openid"`
-	Unionid  string `json:"unionid" json:"unionid"`
-	Gender   string `json:"gender" json:"gender"`
-	Name     string `json:"name" json:"name"`
-	Iconurl  string `json:"iconurl" json:"iconurl"`
+	Openid   string `json:"openid" form:"openid" binding:"required"`
+	Unionid  string `json:"unionid" form:"unionid"`
+	Gender   string `json:"gender" form:"gender"`
+	Name     string `json:"name" form:"name"`
+	Iconurl  string `json:"iconurl" form:"iconurl"`
 }
 
 type wechatLoginRsq struct {

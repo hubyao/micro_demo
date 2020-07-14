@@ -28,13 +28,9 @@ func Init() {
 
 // AddUser 添加用户信息
 func (e *Service) AddUser(ctx context.Context, req *pbUser.AddUserReq, rsp *pbUser.AddUserRsp) error {
-	rsp = &pbUser.AddUserRsp{
-		BaseResponse: &pbUser.BaseResponse{
-			Success: true,
-			Error:   nil,
-		},
-		Uid: 0,
-	}
+	rsp.BaseResponse = &pbUser.BaseResponse{}
+	rsp.BaseResponse.Success = true
+
 	data := &modelUser.User{
 		Phone:      req.Phone,
 		Nick:       req.Nick,
@@ -61,12 +57,8 @@ func (e *Service) AddUser(ctx context.Context, req *pbUser.AddUserReq, rsp *pbUs
 
 // UpdateUser 更新用户信息
 func (e *Service) UpdateUser(ctx context.Context, req *pbUser.UpdateUserReq, rsp *pbUser.UpdateUserRsp) error {
-	rsp = &pbUser.UpdateUserRsp{
-		BaseResponse: &pbUser.BaseResponse{
-			Success: true,
-			Error:   nil,
-		},
-	}
+	rsp.BaseResponse = &pbUser.BaseResponse{}
+	rsp.BaseResponse.Success = true
 
 	err := userService.UpdateUser(modelUser.User{
 		Nick:       req.Nick,
@@ -86,13 +78,9 @@ func (e *Service) UpdateUser(ctx context.Context, req *pbUser.UpdateUserReq, rsp
 
 // GetFromUid 根据用户id获取信息
 func (e *Service) GetFromUid(ctx context.Context, req *pbUser.GetFromUidReq, rsp *pbUser.GetFromUidRsp) error {
-	rsp = &pbUser.GetFromUidRsp{
-		BaseResponse: &pbUser.BaseResponse{
-			Success: true,
-			Error:   nil,
-		},
-		UserInfo: nil,
-	}
+	rsp.BaseResponse = &pbUser.BaseResponse{}
+	rsp.BaseResponse.Success = true
+
 
 	data,err := userService.GetFromUId(req.Uid)
 	if err != nil {
@@ -120,56 +108,39 @@ func (e *Service) GetFromUid(ctx context.Context, req *pbUser.GetFromUidReq, rsp
 
 // GetFromPhone 根据手机号获取信息
 func (e *Service) GetFromPhone(ctx context.Context, req *pbUser.GetFromPhoneReq, rsp *pbUser.GetFromPhoneRsp) error {
-	// rsp = &pbUser.GetFromPhoneRsp{
-	// 	BaseResponse: &pbUser.BaseResponse{
-	// 		Success: true,
-	// 		Error:   nil,
-	// 	},
-	// 	UserInfo: &pbUser.UserInfo{},
-	// }
+	rsp.BaseResponse = &pbUser.BaseResponse{}
+	rsp.BaseResponse.Success = true
+
+
+	data,err := userService.GetFromPhone(req.Phone)
+
+
+	if err != nil {
+		logging.Logger().Error(err)
+		rsp.BaseResponse.Success = false
+		rsp.BaseResponse.Error = &pbUser.Error{
+			Code:    500,
+			Message: err.Error(),
+		}
+	}
+	if nil == data{
+		logging.Logger().Debug(rsp)
+		return  nil
+	}
+
+	rsp.UserInfo = &pbUser.UserInfo{
+		Uid:   data.UId,
+		Nick:  data.Nick,
+		Phone: data.Phone,
+	}
 	
-	// logging.Logger().Debug(rsp)
-	// data,err := userService.GetFromPhone(req.Phone)
-
-	// logging.Logger().Debug(data)
-	// if err != nil {
-	// 	logging.Logger().Error(err)
-	// 	rsp.BaseResponse.Success = false
-	// 	rsp.BaseResponse.Error = &pbUser.Error{
-	// 		Code:    500,
-	// 		Message: err.Error(),
-	// 	}
-	// }
-
-	// logging.Logger().Debug(rsp)
-	// if nil == data{
-	// 	logging.Logger().Debug(rsp)
-	// 	return  nil
-	// }
-	// logging.Logger().Debug(rsp)
-
-
-	
-	// rsp.UserInfo = &pbUser.UserInfo{
-	// 	Uid:   data.UId,
-	// 	Nick:  data.Nick,
-	// 	Phone: data.Phone,
-	// }
-	
-
-	// logging.Logger().Debug(rsp)
-	// return nil
+	return nil
 }
 
 // ParseToken 生成token 
 func (e *Service) ParseToken(ctx context.Context, req *pbUser.ParseTokenReq, rsp *pbUser.ParseTokenRsp) error {
-	rsp = &pbUser.ParseTokenRsp{
-		BaseResponse: &pbUser.BaseResponse{
-			Success: true,
-			Error:   nil,
-		},
-		Uid:0,
-	}
+	rsp.BaseResponse = &pbUser.BaseResponse{}
+	rsp.BaseResponse.Success = true
 
 	dataJwt ,err := userService.ParseToken(req.Token)
 	if err != nil {
@@ -189,13 +160,8 @@ func (e *Service) ParseToken(ctx context.Context, req *pbUser.ParseTokenReq, rsp
 
 // GenerateToken 生成token 
 func (e *Service) GenerateToken(ctx context.Context, req *pbUser.GenerateTokenReq, rsp *pbUser.GenerateTokenRsp) error {
-	rsp = &pbUser.GenerateTokenRsp{
-		BaseResponse: &pbUser.BaseResponse{
-			Success: true,
-			Error:   nil,
-		},
-		Token:"",
-	}
+	rsp.BaseResponse = &pbUser.BaseResponse{}
+	rsp.BaseResponse.Success = true
 
 	token ,err := userService.GenerateToken(req.Uid,0)
 	if err != nil {
@@ -217,14 +183,8 @@ func (e *Service) GenerateToken(ctx context.Context, req *pbUser.GenerateTokenRe
 // UserOauthLogin 用户授权登陆
 func (e *Service) UserOauthLogin(ctx context.Context, req *pbUser.UserOauthLoginReq, rsp *pbUser.UserOauthLoginRsp) error {
 	
-	rsp = &pbUser.UserOauthLoginRsp{
-		BaseResponse: &pbUser.BaseResponse{
-			Success: true,
-			Error:   nil,
-		},
-		Uid: 0,
-		Token:"",
-	}
+	rsp.BaseResponse = &pbUser.BaseResponse{}
+	rsp.BaseResponse.Success = true
 	
 	dataUserOauth ,err := userService.GetUserOauthByPlatformWechat(req.UserOauth.OpenId)
 	if err != nil {
@@ -236,8 +196,9 @@ func (e *Service) UserOauthLogin(ctx context.Context, req *pbUser.UserOauthLogin
 		}
 	}
 
+
 	// 存在授权
-	if nil != dataUserOauth{
+	if dataUserOauth.UserOauthId != 0{
 		// 生成token
 		token ,err := userService.GenerateToken(dataUserOauth.UId,0)
 		if err != nil {
@@ -249,11 +210,13 @@ func (e *Service) UserOauthLogin(ctx context.Context, req *pbUser.UserOauthLogin
 			}
 		}
 
+
 		rsp.Token = token
 		rsp.Uid = dataUserOauth.UId
 		return nil
 	}
 	
+
 
 	// 不存在授权
 	// 添加用户信息
@@ -270,6 +233,7 @@ func (e *Service) UserOauthLogin(ctx context.Context, req *pbUser.UserOauthLogin
 			Message: err.Error(),
 		}
 	}
+
 
 	// 添加授权信息
 	err = userService.AddUserOauthr(&modelUser.UserOauth{
@@ -305,7 +269,7 @@ func (e *Service) UserOauthLogin(ctx context.Context, req *pbUser.UserOauthLogin
 	}
 
 	rsp.Token = token
-	rsp.Uid = dataUserOauth.UId
+	rsp.Uid = dataUser.UId
 	
 
 	return nil
