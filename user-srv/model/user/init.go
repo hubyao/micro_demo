@@ -1,7 +1,7 @@
 /*
  * @Author       : jianyao
  * @Date         : 2020-07-14 01:54:29
- * @LastEditTime : 2020-07-14 03:41:26
+ * @LastEditTime : 2020-07-14 06:34:15
  * @Description  : 用户model
  */ 
 
@@ -40,6 +40,11 @@ type Service interface {
 	// token
 	GenerateToken(userId uint64, expireDate int) (string, error)  // 生成token
 	ParseToken(token string) (*jwt.Claims, error) 				  // 解析token
+	
+	// UserOauth
+	GetUserOauthByPlatformWechat(openId string) (result *UserOauth, err error) 
+	UpdateUserOauth(data UserOauth) (err error) 
+	AddUserOauthr(data *UserOauth) (err error) 
 
 }
 

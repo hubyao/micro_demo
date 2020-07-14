@@ -1,7 +1,7 @@
 /*
  * @Author       : jianyao
  * @Date         : 2020-07-14 02:05:17
- * @LastEditTime : 2020-07-14 03:41:07
+ * @LastEditTime : 2020-07-14 06:35:13
  * @Description  : file content
  */ 
 
@@ -39,7 +39,7 @@ func (s *service)AddUser(data *User)(err error){
 }
 
 // Update 更新
-func (s *service)UpdateUser(uId uint64,data User)(err error){
+func (s *service)UpdateUser(data User)(err error){
 	err = xgorm.GetDB().Table((&User{}).TableName()).Update(data).Error
 	if err !=nil {
 		logging.Logger().Error(err)	

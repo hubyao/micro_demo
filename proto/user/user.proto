@@ -53,14 +53,14 @@ message UpdateUserOauthRsp{
 
 
 message UserOauth {
-    string Platform  = 1; // 平台:wechat=微信
-	string OpenId = 2;
-	string Unionid = 3;
-	int Sex = 4;
-	string Name = 5;
-	string Avatar = 6;
-	string Sessionkey = 7;
-	uint64 UId = 8; // 用户id
+    string platform  = 1; // 平台:wechat=微信
+	string openId = 2;
+	string unionid = 3;
+	int32  sex = 4;
+	string name = 5;
+	string avatar = 6;
+	string sessionkey = 7;
+	uint64 uId = 8; // 用户id
 }
 
 message GenerateTokenReq {
