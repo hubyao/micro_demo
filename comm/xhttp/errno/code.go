@@ -1,3 +1,9 @@
+/*
+ * @Author       : jianyao
+ * @Date         : 2020-07-14 06:29:27
+ * @LastEditTime : 2020-07-14 06:46:31
+ * @Description  : file content
+ */ 
 package errno
 
 var (
@@ -12,4 +18,5 @@ var (
 var (
 	ErrUserLogin    =  &Errno{Code: 1001, Message: "login fail"}
 	ErrUserSms      =  &Errno{Code: 1002, Message: "send sms fail"}
+	ErrUserAddUserOauth =   &Errno{Code: 1002, Message: "db add  UserOauth fail"} 
 )

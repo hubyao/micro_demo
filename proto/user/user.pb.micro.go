@@ -50,6 +50,7 @@ type UserService interface {
 	// token
 	GenerateToken(ctx context.Context, in *GenerateTokenReq, opts ...client.CallOption) (*GenerateTokenRsp, error)
 	ParseToken(ctx context.Context, in *ParseTokenReq, opts ...client.CallOption) (*ParseTokenRsp, error)
+	UserOauthLogin(ctx context.Context, in *UserOauthLoginReq, opts ...client.CallOption) (*UserOauthLoginRsp, error)
 }
 
 type userService struct {
@@ -124,6 +125,16 @@ func (c *userService) ParseToken(ctx context.Context, in *ParseTokenReq, opts ..
 	return out, nil
 }
 
+func (c *userService) UserOauthLogin(ctx context.Context, in *UserOauthLoginReq, opts ...client.CallOption) (*UserOauthLoginRsp, error) {
+	req := c.c.NewRequest(c.name, "User.UserOauthLogin", in)
+	out := new(UserOauthLoginRsp)
+	err := c.c.Call(ctx, req, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // Server API for User service
 
 type UserHandler interface {
@@ -135,6 +146,7 @@ type UserHandler interface {
 	// token
 	GenerateToken(context.Context, *GenerateTokenReq, *GenerateTokenRsp) error
 	ParseToken(context.Context, *ParseTokenReq, *ParseTokenRsp) error
+	UserOauthLogin(context.Context, *UserOauthLoginReq, *UserOauthLoginRsp) error
 }
 
 func RegisterUserHandler(s server.Server, hdlr UserHandler, opts ...server.HandlerOption) error {
@@ -145,6 +157,7 @@ func RegisterUserHandler(s server.Server, hdlr UserHandler, opts ...server.Handl
 		UpdateUser(ctx context.Context, in *UpdateUserReq, out *UpdateUserRsp) error
 		GenerateToken(ctx context.Context, in *GenerateTokenReq, out *GenerateTokenRsp) error
 		ParseToken(ctx context.Context, in *ParseTokenReq, out *ParseTokenRsp) error
+		UserOauthLogin(ctx context.Context, in *UserOauthLoginReq, out *UserOauthLoginRsp) error
 	}
 	type User struct {
 		user
@@ -179,4 +192,8 @@ func (h *userHandler) GenerateToken(ctx context.Context, in *GenerateTokenReq, o
 
 func (h *userHandler) ParseToken(ctx context.Context, in *ParseTokenReq, out *ParseTokenRsp) error {
 	return h.UserHandler.ParseToken(ctx, in, out)
+}
+
+func (h *userHandler) UserOauthLogin(ctx context.Context, in *UserOauthLoginReq, out *UserOauthLoginRsp) error {
+	return h.UserHandler.UserOauthLogin(ctx, in, out)
 }

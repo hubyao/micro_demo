@@ -151,5 +151,96 @@ func (e *Service) GetFromPhone(ctx context.Context, req *pbUser.GetFromPhoneReq,
 	return nil
 }
 
+// UserOauthLogin 用户授权登陆
+func (e *Service) UserOauthLogin(ctx context.Context, req *pbUser.UserOauthLoginReq, rsp *pbUser.UserOauthLoginRsp) error {
+	
+	rsp = &pbUser.UserOauthLoginRsp{
+		BaseResponse: &pbUser.BaseResponse{
+			Success: true,
+			Error:   nil,
+		},
+		Uid: 0,
+		Token:"",
+	}
+	
+	dataUserOauth ,err := userService.GetUserOauthByPlatformWechat(req.UserOauth.OpenId)
+	if err != nil {
+		logging.Logger().Error(err)
+		rsp.BaseResponse.Success = false
+		rsp.BaseResponse.Error = &pbUser.Error{
+			Code:    500,
+			Message: err.Error(),
+		}
+	}
+
+	// 存在授权
+	if nil != dataUserOauth{
+		// 生成token
+		token ,err := userService.GenerateToken(dataUserOauth.UId,0)
+		if err != nil {
+			logging.Logger().Error(err)
+			rsp.BaseResponse.Success = false
+			rsp.BaseResponse.Error = &pbUser.Error{
+				Code:    500,
+				Message: err.Error(),
+			}
+		}
+
+		rsp.Token = token
+		rsp.Uid = dataUserOauth.UId
+		return nil
+	}
+
+
+	
+
+	// 不存在授权
+	// 添加用户信息
+	dataUser := &modelUser.User{
+		Nick:       req.UserOauth.Name,
+	}
+
+	err = userService.AddUser(dataUser)
+	if err != nil {
+		logging.Logger().Error(err)
+		rsp.BaseResponse.Success = false
+		rsp.BaseResponse.Error = &pbUser.Error{
+			Code:    500,
+			Message: err.Error(),
+		}
+	}
+
+	// 添加授权信息
+	err = userService.AddUserOauthr(&modelUser.UserOauth{
+	
+	})
+
+	if err != nil {
+		logging.Logger().Error(err)
+		rsp.BaseResponse.Success = false
+		rsp.BaseResponse.Error = &pbUser.Error{
+			Code:    errno.ErrUserAddUserOauth,
+			Message: err.Error(),
+		}
+	}
+
+
+	// 生成token
+	token ,err := userService.GenerateToken(dataUserOauth.UId,0)
+	if err != nil {
+		logging.Logger().Error(err)
+		rsp.BaseResponse.Success = false
+		rsp.BaseResponse.Error = &pbUser.Error{
+			Code:    500,
+			Message: err.Error(),
+		}
+	}
+
+	rsp.Token = token
+	rsp.Uid = dataUserOauth.UId
+	
+
+	return nil
+}
 
 
