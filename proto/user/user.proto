@@ -3,14 +3,38 @@ syntax = "proto3";
 package mu.micro.book.user.srv.service;
 
 service User {
+    // user
     rpc GetFromUid (GetFromUidReq) returns (GetFromUidRsp) {}       // 根据uid获取用户信息
     rpc GetFromPhone (GetFromPhoneReq) returns (GetFromPhoneRsp) {} // 根据手机号获取用户信息
     rpc AddUser(AddUserReq) returns (AddUserRsp) {}                 // 添加用户
     rpc UpdateUser (UpdateUserReq) returns (UpdateUserRsp);         // 更新用户信息
+
+    // token
+    rpc GenerateToken(GenerateTokenReq) (GenerateTokenRsp)  // 生成token
+    rpc ParseToken(token string) (*jwt.Claims, error) 				  // 解析token
 }
 
+message GenerateTokenReq {
+    uint64 userId = 1;
+}
+
+message GenerateTokenRsp {
+    BaseResponse baseResponse = 1;
+    string token = 2;
+}
+
+message ParseTokenReq {
+    string token = 1;
+}
+
+message ParseTokenRsp {
+  BaseResponse baseResponse = 1;
+  uint64 userId = 2;
+}
+
+
 message UpdateUserReq{
-    string nick =1; // 用户昵称
+    string nick = 1; // 用户昵称
 }
 
 message UpdateUserRsp{
@@ -18,7 +42,7 @@ message UpdateUserRsp{
 }
 
 message AddUserReq{
-    string nick =1;   // 用户昵称
+    string nick = 1;   // 用户昵称
     string phone = 2; // 用户手机号
 }
 
@@ -37,13 +61,13 @@ message GetFromUidRsp{
 }
 
 message UserInfo {
-    uint64 uid =1;      // 用户id
-    string nick =2;     // 用户昵称
+    uint64 uid = 1;      // 用户id
+    string nick = 2;     // 用户昵称
     string phone = 3;   // 用户手机号
 }
 
 message GetFromPhoneReq{
-    string phone =1; // 手机号
+    string phone = 1; // 手机号
 }
 
 message GetFromPhoneRsp {
