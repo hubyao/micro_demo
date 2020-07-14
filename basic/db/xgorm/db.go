@@ -1,3 +1,9 @@
+/*
+ * @Author       : jianyao
+ * @Date         : 2020-07-14 08:32:22
+ * @LastEditTime : 2020-07-14 08:38:23
+ * @Description  : file content
+ */ 
 package xgorm
 
 import (
@@ -16,6 +22,9 @@ var (
 	dbConf conf.Database // 数据库配置
 	db     *gorm.DB      // gorm cli
 	once   sync.Once     // 用于单例
+
+	ErrRecordNotFound = gorm.ErrRecordNotFound
+
 )
 
 // Init 初始化

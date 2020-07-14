@@ -1,3 +1,9 @@
+/*
+ * @Author       : jianyao
+ * @Date         : 2020-07-14 08:32:22
+ * @LastEditTime : 2020-07-14 08:36:54
+ * @Description  : file content
+ */ 
 package router
 
 import (
@@ -22,7 +28,7 @@ func Handle(g *gin.Engine) {
 
 	u := g.Group("/v1/user")
 	{
-		u.POST("sms",handler.Sms) 					 // 发送验证码
+		u.POST("/sms",handler.Sms) 					 // 发送验证码
 		u.POST("/phone/login",handler.PhoneLogin) 	 // 手机号登陆
 		u.POST("/wechat/login",handler.WechatLogin)    // 微信登陆
 	}
