@@ -41,10 +41,14 @@ type Service interface {
 	GenerateToken(userId uint64, expireDate int) (string, error)  // 生成token
 	ParseToken(token string) (*jwt.Claims, error) 				  // 解析token
 	
-	// UserOauth
-	GetUserOauthByPlatformWechat(openId string) (result *UserOauth, err error) 
-	UpdateUserOauth(data UserOauth) (err error) 
-	AddUserOauthr(data *UserOauth) (err error) 
+	// UserOauth 用户授权
+	GetUserOauthByPlatformWechat(openId string) (result *UserOauth, err error)  // 获取用户授权
+	UpdateUserOauth(data UserOauth) (err error)  // 更新用户授权
+	AddUserOauthr(data *UserOauth) (err error) // 添加用户授权
+
+	// 好友助力
+	AddFriendHelp(data *FriendHelp)(err error) // 添加好友助力
+	GetFriendHelpListByuser(uid uint64) (results []*User, err error) // 获取好友助力列表
 
 }
 

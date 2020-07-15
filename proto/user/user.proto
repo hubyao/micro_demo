@@ -19,7 +19,32 @@ service User {
 
     rpc UserOauthLogin (UserOauthLoginReq) returns (UserOauthLoginRsp){}  // 用户授权登陆
 
+    //FriendHelp 好友助力
+     rpc AddFriendHelp(AddFriendHelpReq) returns (AddFriendHelpRsp){} // 添加好友助力
+     rpc GetFriendHelpListByUser(GetFriendHelpListByUserReq) returns (GetFriendHelpListByUserRsp) {}// 获取好友助力列表
+
 }
+
+message AddFriendHelpReq {
+  uint64  uid =1; // 用户id
+  uint64  friendUid =2; // 朋友id
+}
+
+
+message AddFriendHelpRsp {
+  BaseResponse baseResponse = 1;
+}
+
+message GetFriendHelpListByUserReq {
+  uint64  uid =1;
+}
+
+
+message GetFriendHelpListByUserRsp {
+  BaseResponse baseResponse = 1;
+  repeated  UserInfo userInfo = 2;
+}
+
 
 message UserOauthLoginReq {
     UserOauth userOauth = 1;
@@ -53,13 +78,12 @@ message UpdateUserOauthRsp{
 
 
 message UserOauth {
-    string platform  = 1; // 平台:wechat=微信
+  string platform  = 1; // 平台:wechat=微信
 	string openId = 2;
 	string unionid = 3;
 	int32  sex = 4;
 	string name = 5;
 	string avatar = 6;
-	string sessionkey = 7;
 	uint64 uId = 8; // 用户id
 }
 
@@ -111,9 +135,10 @@ message GetFromUidRsp{
 }
 
 message UserInfo {
-    uint64 uid = 1;      // 用户id
-    string nick = 2;     // 用户昵称
+    uint64 uid = 1;     // 用户id
+    string nick = 2;    // 用户昵称
     string phone = 3;   // 用户手机号
+    string  avatar =4;  // 用户头像
 }
 
 message GetFromPhoneReq{

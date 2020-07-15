@@ -16,7 +16,8 @@ import(
 type User struct {
 	UId        uint64    `gorm:"AUTO_INCREMENT;primary_key;column:uid;type:bigint(20);not null" json:"-"`
 	Phone      string    `gorm:"column:phone;type:varchar(255)" json:"phone"` // 手机号
-	Nick       string    `gorm:"column:nick;type:varchar(255)" json:"nick"`          // 昵称
+	Nick       string    `gorm:"column:nick;type:varchar(255)" json:"nick"`   // 昵称
+	Avatar     string    `gorm:"column:avatar;type:varchar(255)" json:"avatar"` // 头像
 	xgorm.BaseModel
 }
 

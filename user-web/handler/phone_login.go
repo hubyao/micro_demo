@@ -69,7 +69,8 @@ func PhoneLogin(c *gin.Context) {
 			return
 		}
 
-
+		// 新用户
+		rsp.IsNew = true
 		uid = rpcAddUser.Uid
 	}
 
@@ -104,6 +105,7 @@ type phoneLoginReq struct {
 type phoneLoginRsp struct {
 	Token string `json:"token"`
 	Uid   uint64 `json:"uid"`
+	IsNew bool  `json:"is_new"` // 新用户状态:true=新用户,false=老用户
 }
 
 
