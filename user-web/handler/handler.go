@@ -15,4 +15,3 @@ func Init() {
 	UserPbClient = bpUser.NewUserService("mu.micro.book.srv.user", client.DefaultClient)
 }
 
-

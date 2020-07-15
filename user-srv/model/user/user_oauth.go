@@ -19,7 +19,7 @@ const (
 
 // UserOauth 用户授权表
 type UserOauth struct {
-	UserOauthId uint64 `gorm:"primary_key;column:user_oauth_id;type:bigint(20);not null" json:"-"`
+	UserOauthId uint64 `gorm:"primary_key;column:user_oauth_id;type:bigint(20);not null" sql:"AUTO_INCREMENT"`
 	Platform    string `gorm:"column:platform;comment:'平台:wechat=微信'" json:"platform"`
 	OpenId      string
 	Unionid     string

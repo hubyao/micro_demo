@@ -24,7 +24,7 @@ func PhoneLogin(c *gin.Context) {
 
 	// 绑定数据
 	if err := c.ShouldBind(&req); err != nil {
-		xhttp.SendJsonResponse(c, err, nil)
+		xhttp.FailRsp(c, err,"")
 		return
 	}
 
@@ -37,12 +37,12 @@ func PhoneLogin(c *gin.Context) {
 	})
 	if err != nil {
 		logging.Logger().Error(err)
-		xhttp.SendJsonResponse(c, err, rsp)
+		xhttp.FailRsp(c, err, "")
 		return
 	}
 	if !rpcGetFromPhone.BaseResponse.Success{
 		logging.Logger().Error(rpcGetFromPhone.BaseResponse.Error)
-		xhttp.SendJsonResponse(c, errno.ErrUserLogin, rsp)
+		xhttp.FailRsp(c, errno.ErrUserLogin, "")
 		return
 	}
 
@@ -60,12 +60,12 @@ func PhoneLogin(c *gin.Context) {
 		})
 		if err !=nil{
 			logging.Logger().Error(err)
-			xhttp.SendJsonResponse(c, err, rsp)
+			xhttp.FailRsp(c, err, "")
 			return
 		}
 		if !rpcAddUser.BaseResponse.Success{
 			logging.Logger().Error(rpcAddUser.BaseResponse.Error)
-			xhttp.SendJsonResponse(c, errno.ErrUserLogin, rsp)
+			xhttp.FailRsp(c, errno.ErrUserLogin, "")
 			return
 		}
 
@@ -81,20 +81,20 @@ func PhoneLogin(c *gin.Context) {
 	
 	if err != nil {
 		logging.Logger().Error(err)
-		xhttp.SendJsonResponse(c, err, rsp)
+		xhttp.FailRsp(c, err, "")
 		return
 	}
 	
 	if !rpcGenerateToken.BaseResponse.Success{
 		logging.Logger().Error(rpcGenerateToken.BaseResponse.Error)
-		xhttp.SendJsonResponse(c, errno.ErrUserLogin, rsp)
+		xhttp.FailRsp(c, errno.ErrUserLogin, "")
 		return
 	}
 
 
 	rsp.Token = rpcGenerateToken.Token
 	rsp.Uid = uid
-	xhttp.SendJsonResponse(c, err, rsp)
+	xhttp.OkRsp(c, rsp)
 }
 
 type phoneLoginReq struct {

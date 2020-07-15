@@ -20,8 +20,8 @@ func Sms(c *gin.Context) {
 	var err error
 
 	// 绑定数据
-	if err := c.ShouldBind(&req); err != nil {
-		xhttp.SendJsonResponse(c, err, nil)
+	if err = c.ShouldBind(&req); err != nil {
+		xhttp.FailRsp(c, err, "")
 		return
 	}
 
@@ -30,7 +30,7 @@ func Sms(c *gin.Context) {
 
 	SendSms(req.Phone,req.SmsType)
 	
-	xhttp.SendJsonResponse(c, err, rsp)
+	xhttp.OkRsp(c, rsp)
 }
 
 
