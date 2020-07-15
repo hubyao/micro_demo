@@ -15,10 +15,10 @@ import (
 
 // FriendHelp
 type FriendHelp struct {
-	Id         uint64    `gorm:"primary_key;comment:'主键';not null" json:"id"`
+	Id         uint64    `gorm:"primary_key;comment:'主键';not null" json:"id" sql:"AUTO_INCREMENT"`
 	UId        uint64    `gorm:"column:uid;comment:'用户id'" json:"uid"`
 	FriendUid  uint64 	 `gorm:"comment:'朋友id'"`
-	CreateTime time.Time `gorm:"column:create_time"` // 充值时间
+	CreateTime time.Time `gorm:"column:create_time"`
 }
 
 func (u *FriendHelp) TableName() string {
@@ -36,11 +36,11 @@ func (s *service)AddFriendHelp(data *FriendHelp)(err error){
 	return
 }
 
-// GetFriendHelpListByuser 获取好友助力列表
-func (s *service) GetFriendHelpListByuser(uid uint64) (results []*User, err error) {
+// GetFriendHelpListByUser 获取好友助力列表
+func (s *service) GetFriendHelpListByUser(uid uint64) (results []*User, err error) {
 	results = make([]*User,0)
 	err = xgorm.GetDB().Table((&FriendHelp{}).TableName()).
-		Where("uid = ?",uid).
+		Where("friend_help.uid = ?",uid).
 		Joins("join user on user.uid = friend_help.uid").
 		Find(&results).Error
 	if err !=nil && err != xgorm.ErrRecordNotFound{

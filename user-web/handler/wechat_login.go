@@ -24,7 +24,7 @@ func WechatLogin(c *gin.Context) {
 	
 	// 绑定数据
 	if err := c.ShouldBind(&req); err != nil {
-		xhttp.SendJsonResponse(c, err, nil)
+		xhttp.FailRsp(c, err, "")
 		return
 	}
 
@@ -41,16 +41,16 @@ func WechatLogin(c *gin.Context) {
 
 	if err != nil {
 		logging.Logger().Error(err)
-		xhttp.SendJsonResponse(c, errno.ErrUserLogin, rsp)
+		xhttp.FailRsp(c, errno.ErrUserLogin, "")
 		return
 	}
 
 	if !rpcUserOauthLogin.BaseResponse.Success {
 		logging.Logger().Error(err)
-		xhttp.SendJsonResponse(c,
+		xhttp.FailRsp(c,
 			errno.Errno{int(rpcUserOauthLogin.BaseResponse.Error.Code),
 				rpcUserOauthLogin.BaseResponse.Error.Message} , 
-				rsp)
+				"")
 				
 		return
 	}
@@ -58,7 +58,7 @@ func WechatLogin(c *gin.Context) {
 
 	rsp.Token = rpcUserOauthLogin.Token
 	rsp.Uid   = rpcUserOauthLogin.Uid
-	xhttp.SendJsonResponse(c, err, rsp)
+	xhttp.OkRsp(c, rsp)
 }
 
 type wechatLoginReq struct {

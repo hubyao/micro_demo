@@ -11,8 +11,8 @@ import (
 
 import (
 	context "context"
-	client "github.com/micro/go-micro/client"
-	server "github.com/micro/go-micro/server"
+	client "github.com/micro/go-micro/v2/client"
+	server "github.com/micro/go-micro/v2/server"
 )
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -43,9 +43,11 @@ type UserService interface {
 	GenerateToken(ctx context.Context, in *GenerateTokenReq, opts ...client.CallOption) (*GenerateTokenRsp, error)
 	ParseToken(ctx context.Context, in *ParseTokenReq, opts ...client.CallOption) (*ParseTokenRsp, error)
 	UserOauthLogin(ctx context.Context, in *UserOauthLoginReq, opts ...client.CallOption) (*UserOauthLoginRsp, error)
-	//FriendHelp 好友助力
+	// FriendHelp 好友助力
 	AddFriendHelp(ctx context.Context, in *AddFriendHelpReq, opts ...client.CallOption) (*AddFriendHelpRsp, error)
 	GetFriendHelpListByUser(ctx context.Context, in *GetFriendHelpListByUserReq, opts ...client.CallOption) (*GetFriendHelpListByUserRsp, error)
+	// 每日任务
+	GetDailyTaskList(ctx context.Context, in *GetDailyTaskListReq, opts ...client.CallOption) (*GetDailyTaskListRsp, error)
 }
 
 type userService struct {
@@ -156,6 +158,16 @@ func (c *userService) GetFriendHelpListByUser(ctx context.Context, in *GetFriend
 	return out, nil
 }
 
+func (c *userService) GetDailyTaskList(ctx context.Context, in *GetDailyTaskListReq, opts ...client.CallOption) (*GetDailyTaskListRsp, error) {
+	req := c.c.NewRequest(c.name, "User.GetDailyTaskList", in)
+	out := new(GetDailyTaskListRsp)
+	err := c.c.Call(ctx, req, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // Server API for User service
 
 type UserHandler interface {
@@ -168,9 +180,11 @@ type UserHandler interface {
 	GenerateToken(context.Context, *GenerateTokenReq, *GenerateTokenRsp) error
 	ParseToken(context.Context, *ParseTokenReq, *ParseTokenRsp) error
 	UserOauthLogin(context.Context, *UserOauthLoginReq, *UserOauthLoginRsp) error
-	//FriendHelp 好友助力
+	// FriendHelp 好友助力
 	AddFriendHelp(context.Context, *AddFriendHelpReq, *AddFriendHelpRsp) error
 	GetFriendHelpListByUser(context.Context, *GetFriendHelpListByUserReq, *GetFriendHelpListByUserRsp) error
+	// 每日任务
+	GetDailyTaskList(context.Context, *GetDailyTaskListReq, *GetDailyTaskListRsp) error
 }
 
 func RegisterUserHandler(s server.Server, hdlr UserHandler, opts ...server.HandlerOption) error {
@@ -184,6 +198,7 @@ func RegisterUserHandler(s server.Server, hdlr UserHandler, opts ...server.Handl
 		UserOauthLogin(ctx context.Context, in *UserOauthLoginReq, out *UserOauthLoginRsp) error
 		AddFriendHelp(ctx context.Context, in *AddFriendHelpReq, out *AddFriendHelpRsp) error
 		GetFriendHelpListByUser(ctx context.Context, in *GetFriendHelpListByUserReq, out *GetFriendHelpListByUserRsp) error
+		GetDailyTaskList(ctx context.Context, in *GetDailyTaskListReq, out *GetDailyTaskListRsp) error
 	}
 	type User struct {
 		user
@@ -230,4 +245,8 @@ func (h *userHandler) AddFriendHelp(ctx context.Context, in *AddFriendHelpReq, o
 
 func (h *userHandler) GetFriendHelpListByUser(ctx context.Context, in *GetFriendHelpListByUserReq, out *GetFriendHelpListByUserRsp) error {
 	return h.UserHandler.GetFriendHelpListByUser(ctx, in, out)
+}
+
+func (h *userHandler) GetDailyTaskList(ctx context.Context, in *GetDailyTaskListReq, out *GetDailyTaskListRsp) error {
+	return h.UserHandler.GetDailyTaskList(ctx, in, out)
 }

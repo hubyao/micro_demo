@@ -2,14 +2,15 @@ package handler
 
 import (
 	"context"
-	"micro_demo/comm/logging"
 	log "github.com/micro/go-micro/v2/logger"
+	"micro_demo/comm/logging"
 	"micro_demo/comm/xhttp/errno"
 	pbUser "micro_demo/proto/user"
 	modelUser "micro_demo/user-srv/model/user"
 )
 
 type Service struct{}
+
 
 
 var (
@@ -243,7 +244,7 @@ func (e *Service) UserOauthLogin(ctx context.Context, req *pbUser.UserOauthLogin
 		Sex:         int(req.UserOauth.Sex),
 		Name:        req.UserOauth.Name,
 		Avatar:      req.UserOauth.Avatar,
-		Sessionkey:  req.UserOauth.Sessionkey,
+		Sessionkey:  "",
 		UId:         dataUser.UId,
 	})
 
@@ -276,3 +277,79 @@ func (e *Service) UserOauthLogin(ctx context.Context, req *pbUser.UserOauthLogin
 }
 
 
+func (e *Service) AddFriendHelp(ctx context.Context, req *pbUser.AddFriendHelpReq, rsp *pbUser.AddFriendHelpRsp) error {
+	rsp.BaseResponse = &pbUser.BaseResponse{}
+	rsp.BaseResponse.Success = true
+
+	err := userService.AddFriendHelp(&modelUser.FriendHelp{
+		UId:        req.Uid,
+		FriendUid:  req.FriendUid,
+	})
+	if err != nil {
+		logging.Logger().Error(err)
+		rsp.BaseResponse.Success = false
+		rsp.BaseResponse.Error = &pbUser.Error{
+			Code:    500,
+			Message: err.Error(),
+		}
+	}
+
+	return nil
+}
+
+func (e *Service) GetFriendHelpListByUser(ctx context.Context, req *pbUser.GetFriendHelpListByUserReq, rsp *pbUser.GetFriendHelpListByUserRsp) error {
+	rsp.BaseResponse = &pbUser.BaseResponse{}
+	rsp.BaseResponse.Success = true
+
+	data,err := userService.GetFriendHelpListByUser(req.Uid)
+	if err != nil {
+		logging.Logger().Error(err)
+		rsp.BaseResponse.Success = false
+		rsp.BaseResponse.Error = &pbUser.Error{
+			Code:    500,
+			Message: err.Error(),
+		}
+	}
+
+	for _,v := range data{
+		rsp.UserInfoList = append(rsp.UserInfoList,&pbUser.UserInfo{
+			Uid:    v.UId,
+			Nick:   v.Nick,
+			Phone:  v.Phone,
+			Avatar: v.Avatar,
+		})
+	}
+
+	return nil
+}
+
+
+func (e *Service) GetDailyTaskList(ctx context.Context, req *pbUser.GetDailyTaskListReq, rsp *pbUser.GetDailyTaskListRsp) error {
+	rsp.BaseResponse = &pbUser.BaseResponse{}
+	rsp.BaseResponse.Success = true
+
+	data,err := userService.GetDailyTaskList()
+	if err != nil {
+		logging.Logger().Error(err)
+		rsp.BaseResponse.Success = false
+		rsp.BaseResponse.Error = &pbUser.Error{
+			Code:    500,
+			Message: err.Error(),
+		}
+	}
+
+	// TODO: 判断用户是否完成
+
+	for _,v := range data{
+		rsp.DailyTaskList = append(rsp.DailyTaskList,&pbUser.GetDailyTaskListRsp_DailyTask{
+			DailyTaskId:    v.DailyTaskId,
+			Logo:           v.Logo,
+			Title:          v.Title,
+			ExpNum:         v.ExpNum,
+			EnergyNum:      v.EnergyNum,
+			CompleteStatus: false,
+		})
+	}
+
+	return nil
+}
