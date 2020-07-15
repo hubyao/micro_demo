@@ -1,3 +1,11 @@
 FROM alpine
-ADD service-srv /service-srv
-ENTRYPOINT [ "/service-srv" ]
+
+ENV MICRO_REGISTRY_ADDRESS 192.168.13.2:2379
+ENV MICRO_BOOK_CONFIG_GRPC_ADDR 192.168.13.2:9600
+ENV MICRO_BOOK_TRACER_ADDR 192.168.13.2:6831
+
+RUN apk update && apk add tzdata && cp -r -f /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
+
+ADD user-srv /user-srv
+
+ENTRYPOINT [ "/user-srv" ]

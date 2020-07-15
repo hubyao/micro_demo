@@ -1,20 +1,9 @@
-
 GOPATH:=$(shell go env GOPATH)
-
-.PHONY: proto
-proto:
-
-    protoc --proto_path=. --micro_out=. --go_out=.  ../proto/user/*.proto
 
 .PHONY: build
 build: proto
-
-	go build -o user-srv main.go plugin.go
-
-.PHONY: test
-test:
-	go test -v ./... -cover
+	GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -o user-srv main.go plugin.go
 
 .PHONY: docker
-docker:
+docker:docker
 	docker build . -t user-srv:latest
