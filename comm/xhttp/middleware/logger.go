@@ -13,7 +13,6 @@ import (
 const MAX_PRINT_BODY_LEN = 512
 
 
-
 // DetailLogger ...
 type detailLogger struct {
 	gin.ResponseWriter
@@ -65,3 +64,6 @@ func DetailLogger() gin.HandlerFunc {
 
 	}
 }
+
+
+
