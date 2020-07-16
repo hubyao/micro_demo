@@ -8,13 +8,17 @@ package handler
 
 import (
 	"context"
+
 	"fmt"
+
 	"github.com/gin-gonic/gin"
 	"micro_demo/comm/logging"
 	"micro_demo/comm/xhttp"
 	"micro_demo/comm/xhttp/errno"
 	pbUser "micro_demo/proto/user"
+
 	"time"
+
 )
 
 // PhoneLogin 手机号登陆
@@ -29,6 +33,7 @@ func PhoneLogin(c *gin.Context) {
 		xhttp.FailRsp(c, err,"")
 		return
 	}
+
 
 	// 对验证码进行校验
 	rpcVerifyCodeSms,err := UserPbClient.VerifyCodeSms(context.Background(),&pbUser.VerifyCodeSmsReq{
@@ -68,9 +73,11 @@ func PhoneLogin(c *gin.Context) {
 
 	// 判断用户是否存在
 	if 0 == rpcGetFromPhone.UserInfo.Uid {
+
 		// 新用户
 		rsp.IsNew = true
 		uid = UserRegister(c,req)
+
 	}
 
 	// 生成token
@@ -96,6 +103,7 @@ func PhoneLogin(c *gin.Context) {
 	xhttp.OkRsp(c, rsp)
 }
 
+
 // UserRegister 用户注册
 func UserRegister(c *gin.Context,req phoneLoginReq)(uid uint64)  {
 	// 注册
@@ -117,6 +125,7 @@ func UserRegister(c *gin.Context,req phoneLoginReq)(uid uint64)  {
 
 	return rpcAddUser.Uid
 }
+
 
 
 

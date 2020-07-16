@@ -49,6 +49,7 @@ func (e *Service) AddUser(ctx context.Context, req *pbUser.AddUserReq, rsp *pbUs
 	}
 
 	rsp.Uid = data.UId
+
 	
 	return nil
 }
@@ -65,6 +66,7 @@ func (e *Service) UpdateUser(ctx context.Context, req *pbUser.UpdateUserReq, rsp
 		Nick:       req.Nick,
 	})
 
+
 	if err != nil {
 		logging.Logger().Error(err)
 		rsp.BaseResponse.Success = false
@@ -73,6 +75,7 @@ func (e *Service) UpdateUser(ctx context.Context, req *pbUser.UpdateUserReq, rsp
 			Message: err.Error(),
 		}
 	}
+
 
 	return nil
 }
@@ -198,6 +201,7 @@ func (e *Service) UserOauthLogin(ctx context.Context, req *pbUser.UserOauthLogin
 	}
 
 
+
 	// 存在授权
 	if dataUserOauth.UserOauthId != 0{
 		// 生成token
@@ -236,6 +240,7 @@ func (e *Service) UserOauthLogin(ctx context.Context, req *pbUser.UserOauthLogin
 	}
 
 
+
 	// 添加授权信息
 	err = userService.AddUserOauthr(&modelUser.UserOauth{
 		Platform:    "wechat",
@@ -260,6 +265,7 @@ func (e *Service) UserOauthLogin(ctx context.Context, req *pbUser.UserOauthLogin
 
 	// 生成token
 	token ,err := userService.GenerateToken(dataUserOauth.UId,0)
+
 	if err != nil {
 		logging.Logger().Error(err)
 		rsp.BaseResponse.Success = false
@@ -268,6 +274,7 @@ func (e *Service) UserOauthLogin(ctx context.Context, req *pbUser.UserOauthLogin
 			Message: err.Error(),
 		}
 	}
+
 
 	rsp.Token = token
 	rsp.Uid = dataUser.UId
@@ -285,6 +292,7 @@ func (e *Service) AddFriendHelp(ctx context.Context, req *pbUser.AddFriendHelpRe
 		UId:        req.Uid,
 		FriendUid:  req.FriendUid,
 	})
+
 	if err != nil {
 		logging.Logger().Error(err)
 		rsp.BaseResponse.Success = false
@@ -293,6 +301,7 @@ func (e *Service) AddFriendHelp(ctx context.Context, req *pbUser.AddFriendHelpRe
 			Message: err.Error(),
 		}
 	}
+
 
 	return nil
 }
@@ -324,6 +333,7 @@ func (e *Service) GetFriendHelpListByUser(ctx context.Context, req *pbUser.GetFr
 }
 
 
+
 func (e *Service) GetDailyTaskList(ctx context.Context, req *pbUser.GetDailyTaskListReq, rsp *pbUser.GetDailyTaskListRsp) error {
 	rsp.BaseResponse = &pbUser.BaseResponse{}
 	rsp.BaseResponse.Success = true
@@ -352,6 +362,7 @@ func (e *Service) GetDailyTaskList(ctx context.Context, req *pbUser.GetDailyTask
 	}
 
 	return nil
+
 }
 
 
@@ -393,4 +404,5 @@ func (e *Service) VerifyCodeSms(ctx context.Context, req *pbUser.VerifyCodeSmsRe
 
 
 	return nil
+
 }

@@ -22,4 +22,5 @@ var (
 	ErrGetFriendHelp =   &Errno{Code: 1003, Message: "获取好友助力失败"}
 	ErrDailyTask =   &Errno{Code: 1004, Message: "获取每日任务失败"}
 	ErrSmsCodeInvalid =   &Errno{Code: 1005, Message: "短信验证码校验错误"}
+
 )

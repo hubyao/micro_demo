@@ -13,8 +13,6 @@ import (
 	"micro_demo/comm/xhttp"
 	"micro_demo/comm/xhttp/errno"
 	pbUser "micro_demo/proto/user"
-
-	//pbUser "micro_demo/proto/user"
 )
 
 
@@ -31,7 +29,6 @@ func Sms(c *gin.Context) {
 	}
 
 	// TODO: 验证手机号
-
 
 	// 发送验证码
 	rpcSendCodeSms,err := UserPbClient.SendCodeSms(context.Background(),&pbUser.SendCodeSmsReq{

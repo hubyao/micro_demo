@@ -26,6 +26,7 @@ service User {
   // 每日任务
   rpc GetDailyTaskList(GetDailyTaskListReq) returns(GetDailyTaskListRsp){} // 获取每日任务列表
 
+
   // 发送验证码
   rpc SendCodeSms(SendCodeSmsReq) returns(SendCodeSmsRsp){} // 发送验证码
   rpc VerifyCodeSms(VerifyCodeSmsReq) returns(VerifyCodeSmsRsp){} // 验证验证码
@@ -49,6 +50,7 @@ message VerifyCodeSmsReq {
 
 message VerifyCodeSmsRsp {
   BaseResponse baseResponse = 1;
+
 }
 
 message GetDailyTaskListReq{
@@ -78,6 +80,7 @@ message GetDailyTaskListRsp{
 message AddFriendHelpReq {
   uint64  uid = 1; // 用户id
   uint64  friendUid = 2; // 朋友id
+
 }
 
 
@@ -120,6 +123,9 @@ message UpdateUserOauthReq{
   BaseResponse baseResponse = 1;
   UserOauth userOauth = 2;
 }
+
+
+
 
 message UpdateUserOauthRsp{
   BaseResponse baseResponse = 1;

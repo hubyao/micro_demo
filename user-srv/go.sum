@@ -740,8 +740,11 @@ github.com/prometheus/procfs v0.0.2/go.mod h1:TjEm7ze935MbeOT/UhFTIMYKhuLP4wbCsT
 github.com/prometheus/procfs v0.0.3/go.mod h1:4A/X28fw3Fc593LaREMrKMqOKvUAntwMDaekg4FpcdQ=
 github.com/prometheus/procfs v0.0.5/go.mod h1:4A/X28fw3Fc593LaREMrKMqOKvUAntwMDaekg4FpcdQ=
 github.com/prometheus/tsdb v0.7.1/go.mod h1:qhTCs0VvXwvX/y3TZrWD7rabWM+ijKTux40TwIPHuXU=
+<<<<<<< HEAD
 github.com/qichengzx/qcloudsms_go v0.0.0-20191107113638-195af5069b5c h1:DTYb2bE/hKGjE5E3WwbAHqUU9ZF3pMTUpUbFAz0m/ds=
 github.com/qichengzx/qcloudsms_go v0.0.0-20191107113638-195af5069b5c/go.mod h1:mp5Dcp5Mcaa/vVLgyyuW3E4ml/oo0B+E3GnyTh7N050=
+=======
+>>>>>>> 3cadd7f08aec12637dbebdcac902c5148df98533
 github.com/rainycape/memcache v0.0.0-20150622160815-1031fa0ce2f2/go.mod h1:7tZKcyumwBO6qip7RNQ5r77yrssm9bfCowcLEBcU5IA=
 github.com/rakyll/statik v0.1.6/go.mod h1:OEi9wJV/fMUAGx1eNjq75DKDsJVuEv1U0oYdX6GX8Zs=
 github.com/rcrowley/go-metrics v0.0.0-20181016184325-3113b8401b8a/go.mod h1:bCqnVzQkZxMG4s8nGwiZ5l3QUCyqpo9Y+/ZMZ9VjZe4=
