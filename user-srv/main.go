@@ -1,3 +1,9 @@
+/*
+ * @Author       : jianyao
+ * @Date         : 2020-07-16 07:24:59
+ * @LastEditTime : 2020-07-16 08:13:35
+ * @Description  : file content
+ */ 
 package main
 
 import (
@@ -27,7 +33,7 @@ func main() {
 	micReg := etcd.NewRegistry(registryOptions)
 
 
-	t, io, err := tracer.NewTracer("mu.micro.book.srv.user", "")
+	t, io, err := tracer.NewTracer("mu.micro.book.srv.user", "localhost:6831")
 	if err != nil {
 		log.Fatal(err)
 	}

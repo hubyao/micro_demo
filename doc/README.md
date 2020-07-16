@@ -76,6 +76,24 @@
 - gin
 
 
+### 功能
+#### 链路追踪
+部署Jaeger实验环境
+```
+docker run -d --name jaeger 
+-e COLLECTOR_ZIPKIN_HTTP_PORT=9411 
+-p 5775:5775/udp 
+-p 6831:6831/udp 
+-p 6832:6832/udp 
+-p 5778:5778 
+-p 16686:16686 
+-p 14268:14268 
+-p 9411:9411 
+jaegertracing/all-in-one:1.6
+```
+然后，打开 http://localhost:16686 进入 Jaeger 的 UI,启用应用服务,就能使用链路追踪了
+
+
 ## TODO
 - [ ] 动态配置文件
 - [ ] 日志持久化
@@ -83,6 +101,17 @@
 - [ ] Swagger 集成
 - [ ] 熔断、降级、容错与健康检查
 - [ ] 链路追踪
+
+### 功能缺陷
+#### 链路追踪 
+- 参考资料
+    - [第七章 链路追踪](https://github.com/micro-in-cn/tutorials/tree/master/microservice-in-micro/part7)
+    - [microservices](https://github.com/Allenxuxu/microservices)
+#### [2020-07-16]
+链路追踪目前实现了基本功能,但在Jaeger中只能看到当前的服务的响应,并没有显示调用的下一层服务,不知道是不是没有网关导致的,可以使用microservices的demo测试
+
+
+
 
 ## 开发规范
 
