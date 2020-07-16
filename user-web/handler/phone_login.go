@@ -8,11 +8,13 @@ package handler
 
 import (
 	"context"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"micro_demo/comm/logging"
 	"micro_demo/comm/xhttp"
 	"micro_demo/comm/xhttp/errno"
 	pbUser "micro_demo/proto/user"
+	"time"
 )
 
 // PhoneLogin 手机号登陆
@@ -28,9 +30,22 @@ func PhoneLogin(c *gin.Context) {
 		return
 	}
 
-	// TODO：对验证码进行校验
-
-
+	// 对验证码进行校验
+	rpcVerifyCodeSms,err := UserPbClient.VerifyCodeSms(context.Background(),&pbUser.VerifyCodeSmsReq{
+		Phone:   req.Phone,
+		Code:    req.Code,
+		SmsType: "login",
+	})
+	if err != nil {
+		logging.Logger().Error(err)
+		xhttp.FailRsp(c, errno.ErrSmsCodeInvalid, err.Error())
+		return
+	}
+	if !rpcVerifyCodeSms.BaseResponse.Success{
+		logging.Logger().Error(rpcVerifyCodeSms.BaseResponse.Error)
+		xhttp.FailRsp(c, errno.ErrSmsCodeInvalid, "")
+		return
+	}
 
 	rpcGetFromPhone, err := UserPbClient.GetFromPhone(context.Background(), &pbUser.GetFromPhoneReq{
 		Phone: req.Phone,
@@ -53,25 +68,9 @@ func PhoneLogin(c *gin.Context) {
 
 	// 判断用户是否存在
 	if 0 == rpcGetFromPhone.UserInfo.Uid {
-		// TODO: 用户不存在进行注册
-		rpcAddUser,err  := UserPbClient.AddUser(context.Background(), &pbUser.AddUserReq{
-			Phone: req.Phone,
-			Nick:  "用户",
-		})
-		if err !=nil{
-			logging.Logger().Error(err)
-			xhttp.FailRsp(c, err, "")
-			return
-		}
-		if !rpcAddUser.BaseResponse.Success{
-			logging.Logger().Error(rpcAddUser.BaseResponse.Error)
-			xhttp.FailRsp(c, errno.ErrUserLogin, "")
-			return
-		}
-
 		// 新用户
 		rsp.IsNew = true
-		uid = rpcAddUser.Uid
+		uid = UserRegister(c,req)
 	}
 
 	// 生成token
@@ -96,6 +95,30 @@ func PhoneLogin(c *gin.Context) {
 	rsp.Uid = uid
 	xhttp.OkRsp(c, rsp)
 }
+
+// UserRegister 用户注册
+func UserRegister(c *gin.Context,req phoneLoginReq)(uid uint64)  {
+	// 注册
+	rpcAddUser,err  := UserPbClient.AddUser(context.Background(), &pbUser.AddUserReq{
+		Phone: req.Phone,
+		Nick: fmt.Sprintf("用户- %v",time.Now().Unix()) ,
+	})
+
+	if err !=nil{
+		logging.Logger().Error(err)
+		xhttp.FailRsp(c, err, "")
+		return
+	}
+	if !rpcAddUser.BaseResponse.Success{
+		logging.Logger().Error(rpcAddUser.BaseResponse.Error)
+		xhttp.FailRsp(c, errno.ErrUserLogin, "")
+		return
+	}
+
+	return rpcAddUser.Uid
+}
+
+
 
 type phoneLoginReq struct {
 	Phone string `json:"phone"  binding:"required"` // 手机号

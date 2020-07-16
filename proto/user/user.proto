@@ -26,6 +26,29 @@ service User {
   // 每日任务
   rpc GetDailyTaskList(GetDailyTaskListReq) returns(GetDailyTaskListRsp){} // 获取每日任务列表
 
+  // 发送验证码
+  rpc SendCodeSms(SendCodeSmsReq) returns(SendCodeSmsRsp){} // 发送验证码
+  rpc VerifyCodeSms(VerifyCodeSmsReq) returns(VerifyCodeSmsRsp){} // 验证验证码
+
+}
+
+message SendCodeSmsReq {
+  string phone  = 1;
+  string smsType = 2;
+}
+
+message SendCodeSmsRsp {
+  BaseResponse baseResponse = 1;
+}
+
+message VerifyCodeSmsReq {
+  string phone   = 1; // 手机号
+  string code   = 2; // 验证码
+  string smsType = 3; // 验证码类型
+}
+
+message VerifyCodeSmsRsp {
+  BaseResponse baseResponse = 1;
 }
 
 message GetDailyTaskListReq{

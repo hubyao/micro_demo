@@ -50,6 +50,10 @@ type Service interface {
 
 	// 每日任务
 	GetDailyTaskList() (results []*DailyTask, err error)
+
+	// 验证码
+	VerifyCodeSms(phone, code, smsType string) (ok bool)
+	SendCodeSms(phone, smsType string) error
 }
 
 // GetService 获取服务类

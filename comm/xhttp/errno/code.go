@@ -17,8 +17,9 @@ var (
 
 var (
 	ErrUserLogin    =  &Errno{Code: 1001, Message: "login fail"}
-	ErrUserSms      =  &Errno{Code: 1002, Message: "send sms fail"}
+	ErrSendSms      =  &Errno{Code: 1002, Message: "send sms fail"}
 	ErrUserAddUserOauth =   &Errno{Code: 1002, Message: "db add  UserOauth fail"}
 	ErrGetFriendHelp =   &Errno{Code: 1003, Message: "获取好友助力失败"}
 	ErrDailyTask =   &Errno{Code: 1004, Message: "获取每日任务失败"}
+	ErrSmsCodeInvalid =   &Errno{Code: 1005, Message: "短信验证码校验错误"}
 )

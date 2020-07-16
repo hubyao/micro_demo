@@ -48,6 +48,9 @@ type UserService interface {
 	GetFriendHelpListByUser(ctx context.Context, in *GetFriendHelpListByUserReq, opts ...client.CallOption) (*GetFriendHelpListByUserRsp, error)
 	// 每日任务
 	GetDailyTaskList(ctx context.Context, in *GetDailyTaskListReq, opts ...client.CallOption) (*GetDailyTaskListRsp, error)
+	// 发送验证码
+	SendCodeSms(ctx context.Context, in *SendCodeSmsReq, opts ...client.CallOption) (*SendCodeSmsRsp, error)
+	VerifyCodeSms(ctx context.Context, in *VerifyCodeSmsReq, opts ...client.CallOption) (*VerifyCodeSmsRsp, error)
 }
 
 type userService struct {
@@ -168,6 +171,26 @@ func (c *userService) GetDailyTaskList(ctx context.Context, in *GetDailyTaskList
 	return out, nil
 }
 
+func (c *userService) SendCodeSms(ctx context.Context, in *SendCodeSmsReq, opts ...client.CallOption) (*SendCodeSmsRsp, error) {
+	req := c.c.NewRequest(c.name, "User.SendCodeSms", in)
+	out := new(SendCodeSmsRsp)
+	err := c.c.Call(ctx, req, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userService) VerifyCodeSms(ctx context.Context, in *VerifyCodeSmsReq, opts ...client.CallOption) (*VerifyCodeSmsRsp, error) {
+	req := c.c.NewRequest(c.name, "User.VerifyCodeSms", in)
+	out := new(VerifyCodeSmsRsp)
+	err := c.c.Call(ctx, req, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // Server API for User service
 
 type UserHandler interface {
@@ -185,6 +208,9 @@ type UserHandler interface {
 	GetFriendHelpListByUser(context.Context, *GetFriendHelpListByUserReq, *GetFriendHelpListByUserRsp) error
 	// 每日任务
 	GetDailyTaskList(context.Context, *GetDailyTaskListReq, *GetDailyTaskListRsp) error
+	// 发送验证码
+	SendCodeSms(context.Context, *SendCodeSmsReq, *SendCodeSmsRsp) error
+	VerifyCodeSms(context.Context, *VerifyCodeSmsReq, *VerifyCodeSmsRsp) error
 }
 
 func RegisterUserHandler(s server.Server, hdlr UserHandler, opts ...server.HandlerOption) error {
@@ -199,6 +225,8 @@ func RegisterUserHandler(s server.Server, hdlr UserHandler, opts ...server.Handl
 		AddFriendHelp(ctx context.Context, in *AddFriendHelpReq, out *AddFriendHelpRsp) error
 		GetFriendHelpListByUser(ctx context.Context, in *GetFriendHelpListByUserReq, out *GetFriendHelpListByUserRsp) error
 		GetDailyTaskList(ctx context.Context, in *GetDailyTaskListReq, out *GetDailyTaskListRsp) error
+		SendCodeSms(ctx context.Context, in *SendCodeSmsReq, out *SendCodeSmsRsp) error
+		VerifyCodeSms(ctx context.Context, in *VerifyCodeSmsReq, out *VerifyCodeSmsRsp) error
 	}
 	type User struct {
 		user
@@ -249,4 +277,12 @@ func (h *userHandler) GetFriendHelpListByUser(ctx context.Context, in *GetFriend
 
 func (h *userHandler) GetDailyTaskList(ctx context.Context, in *GetDailyTaskListReq, out *GetDailyTaskListRsp) error {
 	return h.UserHandler.GetDailyTaskList(ctx, in, out)
+}
+
+func (h *userHandler) SendCodeSms(ctx context.Context, in *SendCodeSmsReq, out *SendCodeSmsRsp) error {
+	return h.UserHandler.SendCodeSms(ctx, in, out)
+}
+
+func (h *userHandler) VerifyCodeSms(ctx context.Context, in *VerifyCodeSmsReq, out *VerifyCodeSmsRsp) error {
+	return h.UserHandler.VerifyCodeSms(ctx, in, out)
 }

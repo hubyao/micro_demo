@@ -353,3 +353,44 @@ func (e *Service) GetDailyTaskList(ctx context.Context, req *pbUser.GetDailyTask
 
 	return nil
 }
+
+
+
+
+// SendCodeSms 发送验证码
+func (e *Service) SendCodeSms(ctx context.Context, req *pbUser.SendCodeSmsReq, rsp *pbUser.SendCodeSmsRsp) error {
+	rsp.BaseResponse = &pbUser.BaseResponse{}
+	rsp.BaseResponse.Success = true
+
+	err := userService.SendCodeSms(req.Phone,req.SmsType)
+	if err != nil {
+		logging.Logger().Error(err)
+		rsp.BaseResponse.Success = false
+		rsp.BaseResponse.Error = &pbUser.Error{
+			Code:    500,
+			Message: err.Error(),
+		}
+	}
+
+	return nil
+}
+
+func (e *Service) VerifyCodeSms(ctx context.Context, req *pbUser.VerifyCodeSmsReq, rsp *pbUser.VerifyCodeSmsRsp) error {
+	rsp.BaseResponse = &pbUser.BaseResponse{}
+	rsp.BaseResponse.Success = true
+
+	rsp.BaseResponse = &pbUser.BaseResponse{}
+	rsp.BaseResponse.Success = true
+
+	ok := userService.VerifyCodeSms(req.Phone,req.Code,req.SmsType)
+	if ok {
+		rsp.BaseResponse.Success = false
+		rsp.BaseResponse.Error = &pbUser.Error{
+			Code:    int32(errno.ErrSmsCodeInvalid.Code),
+			Message: "",
+		}
+	}
+
+
+	return nil
+}

@@ -8,6 +8,7 @@ require (
 	github.com/labstack/echo v3.3.10+incompatible
 	github.com/labstack/gommon v0.3.0 // indirect
 	github.com/natefinch/lumberjack v2.0.0+incompatible
+	github.com/qichengzx/qcloudsms_go v0.0.0-20191107113638-195af5069b5c
 	github.com/valyala/fasttemplate v1.2.0 // indirect
 	go.uber.org/zap v1.15.0
 )
