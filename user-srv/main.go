@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"github.com/opentracing/opentracing-go"
+	"micro_demo/comm/micro/allenxuxu/tracer"
 
 	"github.com/micro/cli/v2"
 	micro "github.com/micro/go-micro/v2"
@@ -14,8 +15,6 @@ import (
 	s "micro_demo/proto/user"
 	"micro_demo/user-srv/handler"
 	"micro_demo/user-srv/model"
-	//openTrace "github.com/micro/go-plugins/wrapper/trace/opentracing"
-	tracer "micro_demo/comm/micro/tracer/jaeger"
 	openTrace "github.com/micro/go-plugins/wrapper/trace/opentracing/v2"
 
 )
