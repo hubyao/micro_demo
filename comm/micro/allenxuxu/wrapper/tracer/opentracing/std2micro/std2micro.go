@@ -7,9 +7,9 @@ import (
 	"net/http"
 	"time"
 
-	statusCode "micro_demo/comm/micro/breaker/http"
+	status_code "micro_demo/comm/micro/allenxuxu/http"
 	"github.com/micro/go-micro/metadata"
-	"github.com/opentracing/opentracing-go"
+	opentracing "github.com/opentracing/opentracing-go"
 	"github.com/opentracing/opentracing-go/ext"
 )
 
@@ -29,6 +29,7 @@ func SetSamplingFrequency(n int) {
 // TracerWrapper tracer wrapper
 func TracerWrapper(h http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		log.Println("test")
 		md := make(map[string]string)
 		spanCtx, _ := opentracing.GlobalTracer().Extract(opentracing.HTTPHeaders, opentracing.HTTPHeadersCarrier(r.Header))
 		sp := opentracing.GlobalTracer().StartSpan(r.URL.Path, opentracing.ChildOf(spanCtx))
@@ -46,7 +47,7 @@ func TracerWrapper(h http.Handler) http.Handler {
 		ctx = metadata.NewContext(ctx, md)
 		r = r.WithContext(ctx)
 
-		sct := &statusCode.StatusCodeTracker{ResponseWriter: w, Status: http.StatusOK}
+		sct := &status_code.StatusCodeTracker{ResponseWriter: w, Status: http.StatusOK}
 		h.ServeHTTP(sct.WrappedResponseWriter(), r)
 
 		ext.HTTPMethod.Set(sp, r.Method)

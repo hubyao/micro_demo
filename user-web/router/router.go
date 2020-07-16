@@ -2,7 +2,8 @@ package router
 
 import (
 	"github.com/gin-gonic/gin"
-	"micro_demo/comm/micro/tracer/gin2micro"
+	"micro_demo/comm/micro/allenxuxu/wrapper/tracer/opentracing/gin2micro"
+
 	"micro_demo/comm/xhttp/middleware"
 	"micro_demo/user-web/handler"
 )
@@ -22,6 +23,7 @@ func Load(g *gin.Engine, mw ...gin.HandlerFunc) *gin.Engine {
 func Handle(g *gin.Engine) {
 
 	u := g.Group("/v1/user")
+	g.Use(gin2micro.TracerWrapper)
 	{
 		u.GET("name", handler.GetName)
 		u.GET("info", handler.QueryUserByName)
