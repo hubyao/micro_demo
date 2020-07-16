@@ -2,6 +2,9 @@ package main
 
 import (
 	"fmt"
+	tracer "micro_demo/comm/micro/tracer/jaeger"
+	"micro_demo/comm/micro/tracer/opentracing/std2micro"
+
 	"net/http"
 
 	"micro_demo/basic"
@@ -15,6 +18,8 @@ import (
 	"github.com/micro/go-micro/v2/registry"
 	"github.com/micro/go-micro/v2/registry/etcd"
 	"github.com/micro/go-micro/v2/web"
+	opentracing "github.com/opentracing/opentracing-go"
+
 )
 
 func main() {
@@ -24,6 +29,17 @@ func main() {
 
 	// 使用etcd注册
 	micReg := etcd.NewRegistry(registryOptions)
+
+
+
+
+	t, io, err := tracer.NewTracer("mu.micro.book.web.user", "localhost:6831")
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer io.Close()
+	opentracing.SetGlobalTracer(t)
+
 
 	// 创建新服务
 	service := web.NewService(
@@ -57,7 +73,9 @@ func main() {
 		g,
 	)
 
-	service.Handle("/", g)
+	//service.Handle("/", g)
+	// 开启链路追踪插件
+	service.Handle("/", std2micro.TracerWrapper(g))
 
 	// run service
 	if err := service.Run(); err != nil {

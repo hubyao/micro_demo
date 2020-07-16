@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"github.com/opentracing/opentracing-go"
 
 	"github.com/micro/cli/v2"
 	micro "github.com/micro/go-micro/v2"
@@ -13,6 +14,10 @@ import (
 	s "micro_demo/proto/user"
 	"micro_demo/user-srv/handler"
 	"micro_demo/user-srv/model"
+	//openTrace "github.com/micro/go-plugins/wrapper/trace/opentracing"
+	tracer "micro_demo/comm/micro/tracer/jaeger"
+	openTrace "github.com/micro/go-plugins/wrapper/trace/opentracing/v2"
+
 )
 
 func main() {
@@ -22,11 +27,21 @@ func main() {
 	// 使用etcd注册
 	micReg := etcd.NewRegistry(registryOptions)
 
+
+	t, io, err := tracer.NewTracer("mu.micro.book.srv.user", "")
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer io.Close()
+
+	opentracing.SetGlobalTracer(t)
+
 	// New Service
 	service := micro.NewService(
 		micro.Name("mu.micro.book.srv.user"),
 		micro.Registry(micReg),
 		micro.Version("latest"),
+		micro.WrapHandler(openTrace.NewHandlerWrapper(opentracing.GlobalTracer())),
 	)
 
 	// 服务初始化
