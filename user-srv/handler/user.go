@@ -3,15 +3,15 @@ package handler
 import (
 	"context"
 	log "github.com/micro/go-micro/v2/logger"
+	"math/rand"
 	"micro_demo/comm/logging"
 	"micro_demo/comm/xhttp/errno"
 	pbUser "micro_demo/proto/user"
 	modelUser "micro_demo/user-srv/model/user"
+	"time"
 )
 
 type Service struct{}
-
-
 
 var (
 	userService modelUser.Service
@@ -33,8 +33,8 @@ func (e *Service) AddUser(ctx context.Context, req *pbUser.AddUserReq, rsp *pbUs
 	rsp.BaseResponse.Success = true
 
 	data := &modelUser.User{
-		Phone:      req.Phone,
-		Nick:       req.Nick,
+		Phone: req.Phone,
+		Nick:  req.Nick,
 	}
 
 	err := userService.AddUser(data)
@@ -50,12 +50,8 @@ func (e *Service) AddUser(ctx context.Context, req *pbUser.AddUserReq, rsp *pbUs
 
 	rsp.Uid = data.UId
 
-	
 	return nil
 }
-
-
-
 
 // UpdateUser 更新用户信息
 func (e *Service) UpdateUser(ctx context.Context, req *pbUser.UpdateUserReq, rsp *pbUser.UpdateUserRsp) error {
@@ -63,9 +59,8 @@ func (e *Service) UpdateUser(ctx context.Context, req *pbUser.UpdateUserReq, rsp
 	rsp.BaseResponse.Success = true
 
 	err := userService.UpdateUser(modelUser.User{
-		Nick:       req.Nick,
+		Nick: req.Nick,
 	})
-
 
 	if err != nil {
 		logging.Logger().Error(err)
@@ -75,7 +70,6 @@ func (e *Service) UpdateUser(ctx context.Context, req *pbUser.UpdateUserReq, rsp
 			Message: err.Error(),
 		}
 	}
-
 
 	return nil
 }
@@ -85,8 +79,7 @@ func (e *Service) GetFromUid(ctx context.Context, req *pbUser.GetFromUidReq, rsp
 	rsp.BaseResponse = &pbUser.BaseResponse{}
 	rsp.BaseResponse.Success = true
 
-
-	data,err := userService.GetFromUId(req.Uid)
+	data, err := userService.GetFromUId(req.Uid)
 	if err != nil {
 		logging.Logger().Error(err)
 		rsp.BaseResponse.Success = false
@@ -96,10 +89,9 @@ func (e *Service) GetFromUid(ctx context.Context, req *pbUser.GetFromUidReq, rsp
 		}
 	}
 
-	if nil == data{
-		return  nil
+	if nil == data {
+		return nil
 	}
-
 
 	rsp.UserInfo = &pbUser.UserInfo{
 		Uid:   data.UId,
@@ -115,9 +107,7 @@ func (e *Service) GetFromPhone(ctx context.Context, req *pbUser.GetFromPhoneReq,
 	rsp.BaseResponse = &pbUser.BaseResponse{}
 	rsp.BaseResponse.Success = true
 
-
-	data,err := userService.GetFromPhone(req.Phone)
-
+	data, err := userService.GetFromPhone(req.Phone)
 
 	if err != nil {
 		logging.Logger().Error(err)
@@ -127,9 +117,9 @@ func (e *Service) GetFromPhone(ctx context.Context, req *pbUser.GetFromPhoneReq,
 			Message: err.Error(),
 		}
 	}
-	if nil == data{
+	if nil == data {
 		logging.Logger().Debug(rsp)
-		return  nil
+		return nil
 	}
 
 	rsp.UserInfo = &pbUser.UserInfo{
@@ -137,7 +127,7 @@ func (e *Service) GetFromPhone(ctx context.Context, req *pbUser.GetFromPhoneReq,
 		Nick:  data.Nick,
 		Phone: data.Phone,
 	}
-	
+
 	return nil
 }
 
@@ -146,51 +136,7 @@ func (e *Service) ParseToken(ctx context.Context, req *pbUser.ParseTokenReq, rsp
 	rsp.BaseResponse = &pbUser.BaseResponse{}
 	rsp.BaseResponse.Success = true
 
-	dataJwt ,err := userService.ParseToken(req.Token)
-	if err != nil {
-			logging.Logger().Error(err)
-			rsp.BaseResponse.Success = false
-			rsp.BaseResponse.Error = &pbUser.Error{
-				Code:    500,
-				Message: err.Error(),
-			}
-	}
-	
-	rsp.Uid = dataJwt.UserId
-	return nil
-}
-
-
-
-// GenerateToken 生成token 
-func (e *Service) GenerateToken(ctx context.Context, req *pbUser.GenerateTokenReq, rsp *pbUser.GenerateTokenRsp) error {
-	rsp.BaseResponse = &pbUser.BaseResponse{}
-	rsp.BaseResponse.Success = true
-
-	token ,err := userService.GenerateToken(req.Uid,0)
-	if err != nil {
-			logging.Logger().Error(err)
-			rsp.BaseResponse.Success = false
-			rsp.BaseResponse.Error = &pbUser.Error{
-				Code:    500,
-				Message: err.Error(),
-			}
-	}
-	
-	rsp.Token = token
-	
-	return nil
-}
-
-
-
-// UserOauthLogin 用户授权登陆
-func (e *Service) UserOauthLogin(ctx context.Context, req *pbUser.UserOauthLoginReq, rsp *pbUser.UserOauthLoginRsp) error {
-	
-	rsp.BaseResponse = &pbUser.BaseResponse{}
-	rsp.BaseResponse.Success = true
-	
-	dataUserOauth ,err := userService.GetUserOauthByPlatformWechat(req.UserOauth.OpenId)
+	dataJwt, err := userService.ParseToken(req.Token)
 	if err != nil {
 		logging.Logger().Error(err)
 		rsp.BaseResponse.Success = false
@@ -200,12 +146,50 @@ func (e *Service) UserOauthLogin(ctx context.Context, req *pbUser.UserOauthLogin
 		}
 	}
 
+	rsp.Uid = dataJwt.UserId
+	return nil
+}
 
+// GenerateToken 生成token
+func (e *Service) GenerateToken(ctx context.Context, req *pbUser.GenerateTokenReq, rsp *pbUser.GenerateTokenRsp) error {
+	rsp.BaseResponse = &pbUser.BaseResponse{}
+	rsp.BaseResponse.Success = true
+
+	token, err := userService.GenerateToken(req.Uid, 0)
+	if err != nil {
+		logging.Logger().Error(err)
+		rsp.BaseResponse.Success = false
+		rsp.BaseResponse.Error = &pbUser.Error{
+			Code:    500,
+			Message: err.Error(),
+		}
+	}
+
+	rsp.Token = token
+
+	return nil
+}
+
+// UserOauthLogin 用户授权登陆
+func (e *Service) UserOauthLogin(ctx context.Context, req *pbUser.UserOauthLoginReq, rsp *pbUser.UserOauthLoginRsp) error {
+
+	rsp.BaseResponse = &pbUser.BaseResponse{}
+	rsp.BaseResponse.Success = true
+
+	dataUserOauth, err := userService.GetUserOauthByPlatformWechat(req.UserOauth.OpenId)
+	if err != nil {
+		logging.Logger().Error(err)
+		rsp.BaseResponse.Success = false
+		rsp.BaseResponse.Error = &pbUser.Error{
+			Code:    500,
+			Message: err.Error(),
+		}
+	}
 
 	// 存在授权
-	if dataUserOauth.UserOauthId != 0{
+	if dataUserOauth.UserOauthId != 0 {
 		// 生成token
-		token ,err := userService.GenerateToken(dataUserOauth.UId,0)
+		token, err := userService.GenerateToken(dataUserOauth.UId, 0)
 		if err != nil {
 			logging.Logger().Error(err)
 			rsp.BaseResponse.Success = false
@@ -215,18 +199,16 @@ func (e *Service) UserOauthLogin(ctx context.Context, req *pbUser.UserOauthLogin
 			}
 		}
 
-
 		rsp.Token = token
 		rsp.Uid = dataUserOauth.UId
 		return nil
 	}
-	
-
 
 	// 不存在授权
 	// 添加用户信息
 	dataUser := &modelUser.User{
-		Nick:       req.UserOauth.Name,
+		Nick: req.UserOauth.Name,
+		Salt: getRandomString(6),
 	}
 
 	err = userService.AddUser(dataUser)
@@ -239,18 +221,16 @@ func (e *Service) UserOauthLogin(ctx context.Context, req *pbUser.UserOauthLogin
 		}
 	}
 
-
-
 	// 添加授权信息
 	err = userService.AddUserOauthr(&modelUser.UserOauth{
-		Platform:    "wechat",
-		OpenId:      req.UserOauth.OpenId,
-		Unionid:     req.UserOauth.Unionid,
-		Sex:         int(req.UserOauth.Sex),
-		Name:        req.UserOauth.Name,
-		Avatar:      req.UserOauth.Avatar,
-		Sessionkey:  "",
-		UId:         dataUser.UId,
+		Platform:   "wechat",
+		OpenId:     req.UserOauth.OpenId,
+		Unionid:    req.UserOauth.Unionid,
+		Sex:        int(req.UserOauth.Sex),
+		Name:       req.UserOauth.Name,
+		Avatar:     req.UserOauth.Avatar,
+		Sessionkey: "",
+		UId:        dataUser.UId,
 	})
 
 	if err != nil {
@@ -262,9 +242,8 @@ func (e *Service) UserOauthLogin(ctx context.Context, req *pbUser.UserOauthLogin
 		}
 	}
 
-
 	// 生成token
-	token ,err := userService.GenerateToken(dataUserOauth.UId,0)
+	token, err := userService.GenerateToken(dataUserOauth.UId, 0)
 
 	if err != nil {
 		logging.Logger().Error(err)
@@ -275,22 +254,19 @@ func (e *Service) UserOauthLogin(ctx context.Context, req *pbUser.UserOauthLogin
 		}
 	}
 
-
 	rsp.Token = token
 	rsp.Uid = dataUser.UId
-	
 
 	return nil
 }
-
 
 func (e *Service) AddFriendHelp(ctx context.Context, req *pbUser.AddFriendHelpReq, rsp *pbUser.AddFriendHelpRsp) error {
 	rsp.BaseResponse = &pbUser.BaseResponse{}
 	rsp.BaseResponse.Success = true
 
 	err := userService.AddFriendHelp(&modelUser.FriendHelp{
-		UId:        req.Uid,
-		FriendUid:  req.FriendUid,
+		UId:       req.Uid,
+		FriendUid: req.FriendUid,
 	})
 
 	if err != nil {
@@ -302,7 +278,6 @@ func (e *Service) AddFriendHelp(ctx context.Context, req *pbUser.AddFriendHelpRe
 		}
 	}
 
-
 	return nil
 }
 
@@ -310,7 +285,7 @@ func (e *Service) GetFriendHelpListByUser(ctx context.Context, req *pbUser.GetFr
 	rsp.BaseResponse = &pbUser.BaseResponse{}
 	rsp.BaseResponse.Success = true
 
-	data,err := userService.GetFriendHelpListByUser(req.Uid)
+	data, err := userService.GetFriendHelpListByUser(req.Uid)
 	if err != nil {
 		logging.Logger().Error(err)
 		rsp.BaseResponse.Success = false
@@ -320,8 +295,8 @@ func (e *Service) GetFriendHelpListByUser(ctx context.Context, req *pbUser.GetFr
 		}
 	}
 
-	for _,v := range data{
-		rsp.UserInfoList = append(rsp.UserInfoList,&pbUser.UserInfo{
+	for _, v := range data {
+		rsp.UserInfoList = append(rsp.UserInfoList, &pbUser.UserInfo{
 			Uid:    v.UId,
 			Nick:   v.Nick,
 			Phone:  v.Phone,
@@ -332,13 +307,11 @@ func (e *Service) GetFriendHelpListByUser(ctx context.Context, req *pbUser.GetFr
 	return nil
 }
 
-
-
 func (e *Service) GetDailyTaskList(ctx context.Context, req *pbUser.GetDailyTaskListReq, rsp *pbUser.GetDailyTaskListRsp) error {
 	rsp.BaseResponse = &pbUser.BaseResponse{}
 	rsp.BaseResponse.Success = true
 
-	data,err := userService.GetDailyTaskList()
+	data, err := userService.GetDailyTaskList()
 	if err != nil {
 		logging.Logger().Error(err)
 		rsp.BaseResponse.Success = false
@@ -350,8 +323,8 @@ func (e *Service) GetDailyTaskList(ctx context.Context, req *pbUser.GetDailyTask
 
 	// TODO: 判断用户是否完成
 
-	for _,v := range data{
-		rsp.DailyTaskList = append(rsp.DailyTaskList,&pbUser.GetDailyTaskListRsp_DailyTask{
+	for _, v := range data {
+		rsp.DailyTaskList = append(rsp.DailyTaskList, &pbUser.GetDailyTaskListRsp_DailyTask{
 			DailyTaskId:    v.DailyTaskId,
 			Logo:           v.Logo,
 			Title:          v.Title,
@@ -365,15 +338,12 @@ func (e *Service) GetDailyTaskList(ctx context.Context, req *pbUser.GetDailyTask
 
 }
 
-
-
-
 // SendCodeSms 发送验证码
 func (e *Service) SendCodeSms(ctx context.Context, req *pbUser.SendCodeSmsReq, rsp *pbUser.SendCodeSmsRsp) error {
 	rsp.BaseResponse = &pbUser.BaseResponse{}
 	rsp.BaseResponse.Success = true
 
-	err := userService.SendCodeSms(req.Phone,req.SmsType)
+	err := userService.SendCodeSms(req.Phone, req.SmsType)
 	if err != nil {
 		logging.Logger().Error(err)
 		rsp.BaseResponse.Success = false
@@ -390,11 +360,8 @@ func (e *Service) VerifyCodeSms(ctx context.Context, req *pbUser.VerifyCodeSmsRe
 	rsp.BaseResponse = &pbUser.BaseResponse{}
 	rsp.BaseResponse.Success = true
 
-	rsp.BaseResponse = &pbUser.BaseResponse{}
-	rsp.BaseResponse.Success = true
-
-	ok := userService.VerifyCodeSms(req.Phone,req.Code,req.SmsType)
-	if ok {
+	ok := userService.VerifyCodeSms(req.Phone, req.Code, req.SmsType)
+	if !ok {
 		rsp.BaseResponse.Success = false
 		rsp.BaseResponse.Error = &pbUser.Error{
 			Code:    int32(errno.ErrSmsCodeInvalid.Code),
@@ -402,7 +369,43 @@ func (e *Service) VerifyCodeSms(ctx context.Context, req *pbUser.VerifyCodeSmsRe
 		}
 	}
 
-
 	return nil
 
+}
+
+func (e *Service) UpdatePwd(ctx context.Context, req *pbUser.UpdatePwdReq, rsp *pbUser.UpdatePwdRsp) error {
+	rsp.BaseResponse = &pbUser.BaseResponse{}
+	rsp.BaseResponse.Success = true
+
+	err := userService.UpdatePwd(req.Uid, req.Pwd)
+
+	if err != nil {
+		logging.Logger().Error(err)
+		return err
+	}
+
+	return nil
+}
+
+func (e *Service) VerifyPwd(ctx context.Context, req *pbUser.VerifyPwdReq, rsp *pbUser.VerifyPwdRsp) error {
+
+	ok, err := userService.VerifyPwd(req.Uid, req.Pwd)
+	if err != nil {
+		logging.Logger().Error(err)
+		return err
+	}
+
+	rsp.Ok = ok
+	return nil
+}
+
+func getRandomString(l int) string {
+	str := "0123456789abcdefghijklmnopqrstuvwxyz"
+	bytes := []byte(str)
+	result := []byte{}
+	r := rand.New(rand.NewSource(time.Now().UnixNano()))
+	for i := 0; i < l; i++ {
+		result = append(result, bytes[r.Intn(len(bytes))])
+	}
+	return string(result)
 }

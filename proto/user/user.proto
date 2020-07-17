@@ -9,9 +9,14 @@ service User {
   rpc AddUser(AddUserReq) returns (AddUserRsp) {}                 // 添加用户
   rpc UpdateUser (UpdateUserReq) returns (UpdateUserRsp){}        // 更新用户信息
 
+  rpc UpdatePwd(UpdatePwdReq)returns (UpdatePwdRsp){}                         // 修改密码
+  rpc VerifyPwd(VerifyPwdReq) returns (VerifyPwdRsp){}                // 验证密码
+
   // token
   rpc GenerateToken(GenerateTokenReq)returns (GenerateTokenRsp){}  // 生成token
   rpc ParseToken(ParseTokenReq)returns (ParseTokenRsp){}         // 解析token
+
+
 
   // UserOauth
   // rpc AddUserOauth(AddUserReq) returns (AddUserRsp) {}                 // 添加用户授权
@@ -33,8 +38,25 @@ service User {
 
 }
 
+message VerifyPwdReq{
+  uint64 uid = 1;
+  string pwd = 2;
+}
+message VerifyPwdRsp{
+  bool ok = 1;
+}
+
+message UpdatePwdReq{
+  uint64 uid = 1;
+  string pwd = 2;
+}
+
+message UpdatePwdRsp{
+  BaseResponse baseResponse = 1;
+}
+
 message SendCodeSmsReq {
-  string phone  = 1;
+  string phone = 1;
   string smsType = 2;
 }
 
@@ -43,8 +65,8 @@ message SendCodeSmsRsp {
 }
 
 message VerifyCodeSmsReq {
-  string phone   = 1; // 手机号
-  string code   = 2; // 验证码
+  string phone = 1; // 手机号
+  string code = 2; // 验证码
   string smsType = 3; // 验证码类型
 }
 

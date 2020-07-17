@@ -32,8 +32,11 @@ func Handle(g *gin.Engine) {
 	e := g.Group("/v1/user")
 	{
 		e.POST("/sms",handler.Sms) 					 // 发送验证码
+
 		e.POST("/phone/login",handler.PhoneLogin) 	 // 手机号登陆
-		e.POST("/wechat/login",handler.WechatLogin)    // 微信登陆
+		e.POST("/wechat/login",handler.WechatLogin)   //  微信登陆
+
+		//e.POST("/wechat/login",handler.)
 	}
 
 
@@ -49,4 +52,9 @@ func Handle(g *gin.Engine) {
 		// 激励视频
 		u.GET("/incentive_video",handler.IncentiveVideo) // 获取激励视频列表
 	}
+
+
+	// 广告
+
+	//
 }

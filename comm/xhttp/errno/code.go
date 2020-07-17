@@ -22,5 +22,8 @@ var (
 	ErrGetFriendHelp =   &Errno{Code: 1003, Message: "获取好友助力失败"}
 	ErrDailyTask =   &Errno{Code: 1004, Message: "获取每日任务失败"}
 	ErrSmsCodeInvalid =   &Errno{Code: 1005, Message: "短信验证码校验错误"}
+	ErrUserNotExist  =  &Errno{Code: 1006, Message: "用户不存在"}
+	ErrUserPwdInvalid   =  &Errno{Code: 1007, Message: "密码错误"}
+	ErrUserExist  =  &Errno{Code: 1008, Message: "用户已存在"}
 
 )

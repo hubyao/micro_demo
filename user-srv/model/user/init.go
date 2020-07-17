@@ -34,6 +34,8 @@ type Service interface {
 	GetBatchFromUId(uids []uint64) (results []*User, err error)     // 根据uid批量获取用户信息
 	GetFromPhone(phone string) (result *User, err error)            // 根据手机号获取用户信息
 	GetBatchFromPhone(phones []string) (results []*User, err error) // 根据手机号批量获取用户信息
+	UpdatePwd(uid uint64, pwd string) error                         // 修改密码
+	VerifyPwd(uid uint64, pwd string) (bool, error)                 // 验证密码
 
 	// token
 	GenerateToken(userId uint64, expireDate int) (string, error) // 生成token
@@ -51,11 +53,9 @@ type Service interface {
 	// 每日任务
 	GetDailyTaskList() (results []*DailyTask, err error)
 
-
 	// 验证码
 	VerifyCodeSms(phone, code, smsType string) (ok bool)
 	SendCodeSms(phone, smsType string) error
-
 }
 
 // GetService 获取服务类

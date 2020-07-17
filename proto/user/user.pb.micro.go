@@ -39,6 +39,8 @@ type UserService interface {
 	GetFromPhone(ctx context.Context, in *GetFromPhoneReq, opts ...client.CallOption) (*GetFromPhoneRsp, error)
 	AddUser(ctx context.Context, in *AddUserReq, opts ...client.CallOption) (*AddUserRsp, error)
 	UpdateUser(ctx context.Context, in *UpdateUserReq, opts ...client.CallOption) (*UpdateUserRsp, error)
+	UpdatePwd(ctx context.Context, in *UpdatePwdReq, opts ...client.CallOption) (*UpdatePwdRsp, error)
+	VerifyPwd(ctx context.Context, in *VerifyPwdReq, opts ...client.CallOption) (*VerifyPwdRsp, error)
 	// token
 	GenerateToken(ctx context.Context, in *GenerateTokenReq, opts ...client.CallOption) (*GenerateTokenRsp, error)
 	ParseToken(ctx context.Context, in *ParseTokenReq, opts ...client.CallOption) (*ParseTokenRsp, error)
@@ -104,6 +106,26 @@ func (c *userService) AddUser(ctx context.Context, in *AddUserReq, opts ...clien
 func (c *userService) UpdateUser(ctx context.Context, in *UpdateUserReq, opts ...client.CallOption) (*UpdateUserRsp, error) {
 	req := c.c.NewRequest(c.name, "User.UpdateUser", in)
 	out := new(UpdateUserRsp)
+	err := c.c.Call(ctx, req, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userService) UpdatePwd(ctx context.Context, in *UpdatePwdReq, opts ...client.CallOption) (*UpdatePwdRsp, error) {
+	req := c.c.NewRequest(c.name, "User.UpdatePwd", in)
+	out := new(UpdatePwdRsp)
+	err := c.c.Call(ctx, req, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userService) VerifyPwd(ctx context.Context, in *VerifyPwdReq, opts ...client.CallOption) (*VerifyPwdRsp, error) {
+	req := c.c.NewRequest(c.name, "User.VerifyPwd", in)
+	out := new(VerifyPwdRsp)
 	err := c.c.Call(ctx, req, out, opts...)
 	if err != nil {
 		return nil, err
@@ -199,6 +221,8 @@ type UserHandler interface {
 	GetFromPhone(context.Context, *GetFromPhoneReq, *GetFromPhoneRsp) error
 	AddUser(context.Context, *AddUserReq, *AddUserRsp) error
 	UpdateUser(context.Context, *UpdateUserReq, *UpdateUserRsp) error
+	UpdatePwd(context.Context, *UpdatePwdReq, *UpdatePwdRsp) error
+	VerifyPwd(context.Context, *VerifyPwdReq, *VerifyPwdRsp) error
 	// token
 	GenerateToken(context.Context, *GenerateTokenReq, *GenerateTokenRsp) error
 	ParseToken(context.Context, *ParseTokenReq, *ParseTokenRsp) error
@@ -219,6 +243,8 @@ func RegisterUserHandler(s server.Server, hdlr UserHandler, opts ...server.Handl
 		GetFromPhone(ctx context.Context, in *GetFromPhoneReq, out *GetFromPhoneRsp) error
 		AddUser(ctx context.Context, in *AddUserReq, out *AddUserRsp) error
 		UpdateUser(ctx context.Context, in *UpdateUserReq, out *UpdateUserRsp) error
+		UpdatePwd(ctx context.Context, in *UpdatePwdReq, out *UpdatePwdRsp) error
+		VerifyPwd(ctx context.Context, in *VerifyPwdReq, out *VerifyPwdRsp) error
 		GenerateToken(ctx context.Context, in *GenerateTokenReq, out *GenerateTokenRsp) error
 		ParseToken(ctx context.Context, in *ParseTokenReq, out *ParseTokenRsp) error
 		UserOauthLogin(ctx context.Context, in *UserOauthLoginReq, out *UserOauthLoginRsp) error
@@ -253,6 +279,14 @@ func (h *userHandler) AddUser(ctx context.Context, in *AddUserReq, out *AddUserR
 
 func (h *userHandler) UpdateUser(ctx context.Context, in *UpdateUserReq, out *UpdateUserRsp) error {
 	return h.UserHandler.UpdateUser(ctx, in, out)
+}
+
+func (h *userHandler) UpdatePwd(ctx context.Context, in *UpdatePwdReq, out *UpdatePwdRsp) error {
+	return h.UserHandler.UpdatePwd(ctx, in, out)
+}
+
+func (h *userHandler) VerifyPwd(ctx context.Context, in *VerifyPwdReq, out *VerifyPwdRsp) error {
+	return h.UserHandler.VerifyPwd(ctx, in, out)
 }
 
 func (h *userHandler) GenerateToken(ctx context.Context, in *GenerateTokenReq, out *GenerateTokenRsp) error {
