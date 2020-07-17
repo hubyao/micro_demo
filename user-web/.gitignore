@@ -10,3 +10,4 @@ pkg/
 *.zip
 .vscode/
 .log
+go.sum
