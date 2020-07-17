@@ -4,7 +4,6 @@ import (
 	"github.com/gin-gonic/gin"
 	"micro_demo/comm/micro/allenxuxu/wrapper/tracer/opentracing/gin2micro"
 
-	"micro_demo/comm/xhttp/middleware"
 	"micro_demo/user-web/handler"
 )
 
@@ -12,8 +11,8 @@ import (
 func Load(g *gin.Engine, mw ...gin.HandlerFunc) *gin.Engine {
 	g.Use(gin.Recovery())
 	g.Use(mw...)
-	g.Use(middleware.DetailLogger())
-	g.Use(gin2micro.TracerWrapper)
+	//g.Use(middleware.DetailLogger())
+	//g.Use(gin2micro.TracerWrapper)
 	Handle(g)
 
 	return g

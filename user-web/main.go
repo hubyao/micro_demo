@@ -2,15 +2,6 @@ package main
 
 import (
 	"fmt"
-	"micro_demo/comm/micro/allenxuxu/tracer"
-	"micro_demo/comm/micro/allenxuxu/wrapper/tracer/opentracing/gin2micro"
-	"net/http"
-
-	"micro_demo/basic"
-	"micro_demo/basic/config"
-	"micro_demo/user-web/handler"
-	"micro_demo/user-web/router"
-
 	"github.com/gin-gonic/gin"
 	"github.com/micro/cli/v2"
 	log "github.com/micro/go-micro/v2/logger"
@@ -18,6 +9,11 @@ import (
 	"github.com/micro/go-micro/v2/registry/etcd"
 	"github.com/micro/go-micro/v2/web"
 	opentracing "github.com/opentracing/opentracing-go"
+	"micro_demo/basic"
+	"micro_demo/basic/config"
+	"micro_demo/comm/micro/allenxuxu/tracer"
+	"micro_demo/comm/micro/allenxuxu/wrapper/tracer/opentracing/gin2micro"
+	"micro_demo/user-web/handler"
 )
 
 func main() {
@@ -31,7 +27,7 @@ func main() {
 	gin2micro.SetSamplingFrequency(50)
 
 
-	t, io, err := tracer.NewTracer("mu.micro.book.web.user", "localhost:6831")
+	t, io, err := tracer.NewTracer("mu.micro.book.web.user", "")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -46,30 +42,24 @@ func main() {
 		web.Version("latest"),
 		web.Registry(micReg),
 		web.Address(":8088"),
-	)
-
-	// 初始化服务
-	if err := service.Init(
 		web.Action(
 			func(c *cli.Context) {
 				// 初始化handler
 				handler.Init()
 			}),
-	); err != nil {
+	)
+
+	// 初始化服务
+	if err := service.Init(); err != nil {
 		log.Fatal(err)
 	}
 
 	gin.SetMode("debug")
 
-	g := gin.New()
-	g.NoRoute(func(c *gin.Context) {
-		c.String(http.StatusNotFound, "The incorrect API route.")
-		return
-	})
+	g := gin.Default()
 
-	router.Load(
-		g,
-	)
+	r := g.Group("/")
+	r.Use(gin2micro.TracerWrapper)
 
 	//service.Handle("/", g)
 	// 开启链路追踪插件
@@ -80,10 +70,6 @@ func main() {
 		log.Fatal("", err)
 	}
 
-	// 运行服务
-	if err := service.Run(); err != nil {
-		log.Fatal(err)
-	}
 }
 
 func registryOptions(ops *registry.Options) {

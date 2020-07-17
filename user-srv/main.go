@@ -8,7 +8,7 @@ package main
 
 import (
 	"fmt"
-	"github.com/opentracing/opentracing-go"
+
 	"micro_demo/comm/micro/allenxuxu/tracer"
 
 	"github.com/micro/cli/v2"
@@ -22,6 +22,7 @@ import (
 	"micro_demo/user-srv/handler"
 	"micro_demo/user-srv/model"
 	openTrace "github.com/micro/go-plugins/wrapper/trace/opentracing/v2"
+	opentracing "github.com/opentracing/opentracing-go"
 
 )
 
@@ -33,10 +34,11 @@ func main() {
 	micReg := etcd.NewRegistry(registryOptions)
 
 
-	t, io, err := tracer.NewTracer("mu.micro.book.srv.user", "localhost:6831")
+	t, io, err := tracer.NewTracer("mu.micro.book.srv.user","")
 	if err != nil {
 		log.Fatal(err)
 	}
+
 	defer io.Close()
 
 	opentracing.SetGlobalTracer(t)
