@@ -15,15 +15,30 @@ type Response struct {
 	Data    interface{} `json:"data"`
 }
 
-// SendJsonResponse ...
+// deprecated
 func SendJsonResponse(c *gin.Context, err error, data interface{}) {
 	code, message := errno.DecodeErr(err)
-	SendResponse(c, code, message, data)
+	sendResponse(c, code, message, data)
+	return
+}
+
+func FailRsp(c *gin.Context, err error, msg string) {
+	code, message := errno.DecodeErr(err)
+	if msg != "" {
+		message = msg
+	}
+
+	sendResponse(c, code, message, nil)
+	return
+}
+
+func OkRsp(c *gin.Context, data interface{}) {
+	sendResponse(c, 0, "", data)
 	return
 }
 
 //  SendResponse ...
-func SendResponse(c *gin.Context, code int, message string, data interface{}) {
+func sendResponse(c *gin.Context, code int, message string, data interface{}) {
 	resp := Response{
 		Code:    code,
 		Message: message,
