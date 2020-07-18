@@ -123,7 +123,7 @@ func PhoneLogin(c *gin.Context) {
 
 type phoneLoginReq struct {
 	Phone string `json:"phone"  binding:"required"` // 手机号
-	Pwd   string `json:"pwd" binding:"require"` // 密码
+	Pwd   string `json:"pwd" binding:"required"` // 密码
 }
 
 type phoneLoginRsp struct {

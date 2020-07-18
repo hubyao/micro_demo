@@ -8,19 +8,19 @@ import (
 	"math/rand"
 	"micro_demo/basic/redis"
 	"micro_demo/comm/logging"
-	"micro_demo/comm/qcloud/sms"
 	"micro_demo/comm/xredis"
 )
 
 // SendCodeSms 发送验证码短信
-func (s *service)SendCodeSms(phone, smsType string) error {
-	code := rand.Intn(99999) + 1000000 // 生成六位数验证码
-	_, err := sms.NewCli("appid", "appkey", "sign").
-		SendCodeSms(phone, fmt.Sprintf("%v", code))
-	if err != nil {
-		logging.Logger().Error(err)
-		return err
-	}
+func (s *service)SendCodeSms(phone, smsType string) (err error) {
+	code := rand.Intn(99999) + 100000 // 生成六位数验证码
+	logging.Logger().Debugf("验证码: %v",code)
+	//_, err := sms.NewCli("appid", "appkey", "sign").
+	//	SendCodeSms(phone, fmt.Sprintf("%v", code))
+	//if err != nil {
+	//	logging.Logger().Error(err)
+	//	return err
+	//}
 
 	// 对验证码进行缓存
 	cacheKey := fmt.Sprintf(xredis.RedisKeyPhoneCodeSms.Key, phone, smsType)

@@ -17,12 +17,18 @@ func UserRegister(c *gin.Context) {
 	var err error
 	//var uid uint64
 
+	// 绑定数据
+	if err := c.ShouldBind(&req); err != nil {
+		xhttp.FailRsp(c, err,"")
+		return
+	}
+
 
 	// 对验证码进行校验
 	rpcVerifyCodeSms,err := UserPbClient.VerifyCodeSms(context.Background(),&pbUser.VerifyCodeSmsReq{
 		Phone:   req.Phone,
 		Code:    req.Code,
-		SmsType: "login",
+		SmsType: "register",
 	})
 	if err != nil {
 		logging.Logger().Error(err)
@@ -52,9 +58,10 @@ func UserRegister(c *gin.Context) {
 		return
 	}
 
-	if nil != rpcGetFromPhone.UserInfo{
-		uid = rpcGetFromPhone.UserInfo.Uid
-	}
+	logging.Logger().Debugf("debug_info %v",rpcGetFromPhone)
+	//if nil != rpcGetFromPhone.UserInfo{
+	//	//uid = rpcGetFromPhone.UserInfo.Uid
+	//}
 
 	// 用户已存在
 	if 0 != rpcGetFromPhone.UserInfo.Uid {
@@ -97,9 +104,9 @@ func UserRegister(c *gin.Context) {
 }
 
 type userRegisterReq struct {
-	Phone string `json:"phone"`
-	Code  string `json:"code"`
-	Pwd   string `json:"pwd"`
+	Phone string `json:"phone" binding:"required"`
+	Code  string `json:"code" binding:"required"`
+	Pwd   string `json:"pwd" binding:"required"`
 }
 
 type userRegisterRsp struct {

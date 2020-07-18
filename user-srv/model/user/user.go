@@ -76,7 +76,7 @@ func (s *service) GetBatchFromUId(uids []uint64) (results []*User, err error) {
 func (s *service) GetFromPhone(phone string) (result *User, err error) {
 	result = &User{}
 
-	err = xgorm.GetDB().Table((&User{}).TableName()).Where("phone = ?", phone).Find(result).Error
+	err = xgorm.GetDB().Table((&User{}).TableName()).Where("phone = ?", phone).First(result).Error
 	if err != nil && err != xgorm.ErrRecordNotFound {
 		logging.Logger().Error(err)
 		return result, err
