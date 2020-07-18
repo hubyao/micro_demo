@@ -11,3 +11,5 @@ pkg/
 .vscode/
 .log
 go.sum
+vendor
+

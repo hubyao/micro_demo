@@ -19,6 +19,7 @@ type Response struct {
 func SendJsonResponse(c *gin.Context, err error, data interface{}) {
 	code, message := errno.DecodeErr(err)
 	sendResponse(c, code, message, data)
+
 	return
 }
 
@@ -34,8 +35,13 @@ func FailRsp(c *gin.Context, err error, msg string) {
 
 func OkRsp(c *gin.Context, data interface{}) {
 	sendResponse(c, 0, "", data)
+
 	return
 }
+
+
+
+
 
 //  SendResponse ...
 func sendResponse(c *gin.Context, code int, message string, data interface{}) {

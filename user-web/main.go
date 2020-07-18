@@ -31,7 +31,7 @@ func main() {
 		web.Name("mu.micro.book.web.user"),
 		web.Version("latest"),
 		web.Registry(micReg),
-		web.Address(":8088"),
+		web.Address(":8080"),
 	)
 
 	// 初始化服务

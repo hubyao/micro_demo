@@ -1,3 +1,9 @@
+/*
+ * @Author       : jianyao
+ * @Date         : 2020-07-14 06:29:27
+ * @LastEditTime : 2020-07-14 06:46:31
+ * @Description  : file content
+ */ 
 package errno
 
 var (
@@ -7,4 +13,17 @@ var (
 	ForbiddenError      = &Errno{Code: 403, Message: "Forbidden"}
 	InternalServerError = &Errno{Code: 500, Message: "internal server error"}
 	InvalidTokenError   = &Errno{Code: 600, Message: "Invalid token"}
+)
+
+var (
+	ErrUserLogin    =  &Errno{Code: 1001, Message: "login fail"}
+	ErrSendSms      =  &Errno{Code: 1002, Message: "send sms fail"}
+	ErrUserAddUserOauth =   &Errno{Code: 1002, Message: "db add  UserOauth fail"}
+	ErrGetFriendHelp =   &Errno{Code: 1003, Message: "获取好友助力失败"}
+	ErrDailyTask =   &Errno{Code: 1004, Message: "获取每日任务失败"}
+	ErrSmsCodeInvalid =   &Errno{Code: 1005, Message: "短信验证码校验错误"}
+	ErrUserNotExist  =  &Errno{Code: 1006, Message: "用户不存在"}
+	ErrUserPwdInvalid   =  &Errno{Code: 1007, Message: "密码错误"}
+	ErrUserExist  =  &Errno{Code: 1008, Message: "用户已存在"}
+
 )

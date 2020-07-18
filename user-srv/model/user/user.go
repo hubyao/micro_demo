@@ -1,92 +1,144 @@
+/*
+ * @Author       : jianyao
+ * @Date         : 2020-07-14 02:05:17
+ * @LastEditTime : 2020-07-14 10:22:42
+ * @Description  : file content
+ */
+
 package user
 
 import (
-	"fmt"
-	"log"
-	"sync"
-
+	"crypto/md5"
+	"encoding/hex"
 	"micro_demo/basic/db/xgorm"
-	proto "micro_demo/proto/user"
+	"micro_demo/comm/logging"
 )
-
-var (
-	s *service
-	m sync.RWMutex
-)
-
-// service 服务
-type service struct {
-}
-
-// Service 用户服务类
-type Service interface {
-	// QueryUserByName 根据用户名获取用户
-	QueryUserByName(userName string) (ret *proto.User, err error)
-}
-
-// GetService 获取服务类
-func GetService() (Service, error) {
-	if s == nil {
-		return nil, fmt.Errorf("[GetService] GetService 未初始化")
-	}
-	return s, nil
-}
-
-// Init 初始化用户服务层
-func Init() {
-	m.Lock()
-	defer m.Unlock()
-
-	if s != nil {
-		return
-	}
-
-	s = &service{}
-
-	//TODO: 同步数据库
-
-}
 
 // User ...
 type User struct {
-	ID       int64  `json:"id" gorm:"primary_key;AUTO_INCREMENT"`
-	UserID   int64  `json:"user_id" gorm:"column:user_id"`
-	UserName string `json:"user_name"  gorm:"column:user_id"`
-	Pwd      string `json:"pwd"  gorm:"column:pwd"`
+	UId    uint64 `gorm:"AUTO_INCREMENT;primary_key;column:uid;type:bigint(20);not null" sql:"AUTO_INCREMENT"`
+	Phone  string `gorm:"column:phone;type:varchar(255)" json:"phone"`   // 手机号
+	Nick   string `gorm:"column:nick;type:varchar(255)" json:"nick"`     // 昵称
+	Avatar string `gorm:"column:avatar;type:varchar(255)" json:"avatar"` // 头像
+	Pwd    string `gorm:"comment:'密码'"`
+	Salt   string `gorm:"comment:'盐'"`
+	xgorm.BaseModel
 }
 
-// QueryUserByName 查询名字
-// func (s *service) QueryUserByName(userName string) (ret *proto.User, err error) {
-// 	queryString := `SELECT user_id, user_name, pwd FROM user WHERE user_name = ?`
+// TableName get sql table name.获取数据库表名
+func (u *User) TableName() string {
+	return "user"
+}
 
-// 	// 获取数据库
-// 	o := db.GetDB()
-
-// 	ret = &proto.User{}
-
-// 	// 查询
-// 	err = o.QueryRow(queryString, userName).Scan(&ret.Id, &ret.Name, &ret.Pwd)
-// 	if err != nil {
-// 		log.Infof("[QueryUserByName] 查询数据失败，err：%s", err)
-// 		return
-// 	}
-// 	return
-// }
-
-func (s *service) QueryUserByName(userName string) (ret *proto.User, err error) {
-	data := User{}
-	ret = &proto.User{}
-	o := xgorm.GetDB()
-
-	err = o.Where("user_name = ?", userName).First(&data).Error
-
+// Add  添加
+func (s *service) AddUser(data *User) (err error) {
+	err = xgorm.GetDB().Table((&User{}).TableName()).Create(data).Error
 	if err != nil {
-		log.Fatal(err)
-		return ret, err
+		logging.Logger().Error(err)
 	}
 
-	ret = &proto.User{
-		Pwd: data.Pwd,
-	}
-	return ret, nil
+	return
 }
+
+// Update 更新
+func (s *service) UpdateUser(data User) (err error) {
+	err = xgorm.GetDB().Table((&User{}).TableName()).Update(data).Error
+	if err != nil {
+		logging.Logger().Error(err)
+	}
+
+	return
+}
+
+// GetFromUId 通过uid获取用户
+func (s *service) GetFromUId(uid uint64) (result *User, err error) {
+	result = &User{}
+	err = xgorm.GetDB().Table((&User{}).TableName()).Where("uid = ?", uid).Find(result).Error
+	if err != nil && err != xgorm.ErrRecordNotFound {
+		logging.Logger().Error(err)
+		return result, err
+	}
+
+	return result, nil
+}
+
+// GetBatchFromUId 批量唯一主键查找
+func (s *service) GetBatchFromUId(uids []uint64) (results []*User, err error) {
+	err = xgorm.GetDB().Table((&User{}).TableName()).Where("uid IN (?)", uids).Find(&results).Error
+	if err != nil && err != xgorm.ErrRecordNotFound {
+		logging.Logger().Error(err)
+	}
+
+	return
+}
+
+// GetFromPhone 通过phone获取用户
+func (s *service) GetFromPhone(phone string) (result *User, err error) {
+	result = &User{}
+
+	err = xgorm.GetDB().Table((&User{}).TableName()).Where("phone = ?", phone).First(result).Error
+	if err != nil && err != xgorm.ErrRecordNotFound {
+		logging.Logger().Error(err)
+		return result, err
+	}
+
+	return result, nil
+}
+
+// GetBatchFromPhone 批量手机号查找 
+func (s *service) GetBatchFromPhone(phones []string) (results []*User, err error) {
+	err = xgorm.GetDB().Table((&User{}).TableName()).Where("phone IN (?)", phones).Find(&results).Error
+	if err != nil && err != xgorm.ErrRecordNotFound {
+		logging.Logger().Error(err)
+	}
+
+	return
+}
+
+// UpdatePwd 修改密码
+func (s *service) UpdatePwd(uid uint64, pwd string) error {
+
+	userInfo, err := s.GetFromUId(uid)
+	if err != nil {
+		logging.Logger().Error(err)
+	}
+	if userInfo == nil {
+		return nil
+	}
+
+	err = xgorm.GetDB().Table((&User{}).TableName()).
+		Where("uid=?", uid).
+		Update(User{
+			Pwd: md5V(md5V(pwd) + userInfo.Salt),
+		}).Error
+	if err != nil {
+		logging.Logger().Error(err)
+		return err
+	}
+
+	return nil
+}
+
+// VerifyPwd 验证密码
+func (s *service) VerifyPwd(uid uint64, pwd string) (bool, error) {
+
+	userInfo, err := s.GetFromUId(uid)
+	if err != nil {
+		logging.Logger().Error(err)
+	}
+	if userInfo == nil {
+		return false, nil
+	}
+	if userInfo.Pwd != md5V(md5V(pwd)+userInfo.Salt) {
+		return false, nil
+	}
+
+	return true,nil
+}
+
+func md5V(str string) string {
+	h := md5.New()
+	h.Write([]byte(str))
+	return hex.EncodeToString(h.Sum(nil))
+}
+

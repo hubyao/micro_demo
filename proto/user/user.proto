@@ -3,36 +3,238 @@ syntax = "proto3";
 package mu.micro.book.user.srv.service;
 
 service User {
-    rpc QueryUserByName (Request) returns (Response) {}// 
+  // user
+  rpc GetFromUid (GetFromUidReq) returns (GetFromUidRsp) {}       // 根据uid获取用户信息
+  rpc GetFromPhone (GetFromPhoneReq) returns (GetFromPhoneRsp) {} // 根据手机号获取用户信息
+  rpc AddUser(AddUserReq) returns (AddUserRsp) {}                 // 添加用户
+  rpc UpdateUser (UpdateUserReq) returns (UpdateUserRsp){}        // 更新用户信息
+
+  rpc UpdatePwd(UpdatePwdReq)returns (UpdatePwdRsp){}                         // 修改密码
+  rpc VerifyPwd(VerifyPwdReq) returns (VerifyPwdRsp){}                // 验证密码
+
+  // token
+  rpc GenerateToken(GenerateTokenReq)returns (GenerateTokenRsp){}  // 生成token
+  rpc ParseToken(ParseTokenReq)returns (ParseTokenRsp){}         // 解析token
+
+
+
+  // UserOauth
+  // rpc AddUserOauth(AddUserReq) returns (AddUserRsp) {}                 // 添加用户授权
+  // rpc UpdateUserOauth (UpdateUserReq) returns (UpdateUserRsp){}        // 更新用户授权
+
+  rpc UserOauthLogin (UserOauthLoginReq) returns (UserOauthLoginRsp){}  // 用户授权登陆
+
+  // FriendHelp 好友助力
+  rpc AddFriendHelp(AddFriendHelpReq) returns (AddFriendHelpRsp){} // 添加好友助力
+  rpc GetFriendHelpListByUser(GetFriendHelpListByUserReq) returns (GetFriendHelpListByUserRsp) {}// 获取好友助力列表
+
+  // 每日任务
+  rpc GetDailyTaskList(GetDailyTaskListReq) returns(GetDailyTaskListRsp){} // 获取每日任务列表
+
+
+  // 发送验证码
+  rpc SendCodeSms(SendCodeSmsReq) returns(SendCodeSmsRsp){} // 发送验证码
+  rpc VerifyCodeSms(VerifyCodeSmsReq) returns(VerifyCodeSmsRsp){} // 验证验证码
+
 }
 
-message user {
-    uint64 id = 1; //
-    string name = 2;
-    string pwd = 3;
-    uint64 createdTime = 4;
-    uint64 updatedTime = 5;
+message VerifyPwdReq{
+  uint64 uid = 1;
+  string pwd = 2;
+}
+message VerifyPwdRsp{
+  bool ok = 1;
+}
+
+message UpdatePwdReq{
+  uint64 uid = 1;
+  string pwd = 2;
+}
+
+message UpdatePwdRsp{
+  BaseResponse baseResponse = 1;
+}
+
+message SendCodeSmsReq {
+  string phone = 1;
+  string smsType = 2;
+}
+
+message SendCodeSmsRsp {
+  BaseResponse baseResponse = 1;
+}
+
+message VerifyCodeSmsReq {
+  string phone = 1; // 手机号
+  string code = 2; // 验证码
+  string smsType = 3; // 验证码类型
+}
+
+message VerifyCodeSmsRsp {
+  BaseResponse baseResponse = 1;
+
+}
+
+message GetDailyTaskListReq{
+  uint64  uid = 1; // 用户id
+}
+
+message GetDailyTaskListRsp{
+  BaseResponse baseResponse = 1;
+  repeated DailyTask dailyTaskList = 2; // 任务列表
+
+
+  message DailyTask {
+    uint64  dailyTaskId = 1; // 任务id
+    string  logo = 2 ; // logo
+    string   title = 3; //标题
+    int64   expNum = 4; // 经验数
+    int64   energyNum = 5; // 能量数
+    bool completeStatus = 6; // 状态:true=已完成,false=未完成
+  }
 }
 
 
-message Request {
-    string userID = 1;
-    string userName = 2;
-    string userPwd = 3;
+
+
+
+
+message AddFriendHelpReq {
+  uint64  uid = 1; // 用户id
+  uint64  friendUid = 2; // 朋友id
+
 }
 
-message Response {
-    BaseResponse baseResponse = 1;
-    user user = 2;
+
+message AddFriendHelpRsp {
+  BaseResponse baseResponse = 1;
+}
+
+message GetFriendHelpListByUserReq {
+  uint64  uid = 1;
+}
+
+
+message GetFriendHelpListByUserRsp {
+  BaseResponse baseResponse = 1;
+  repeated  UserInfo userInfoList = 2;
+}
+
+
+message UserOauthLoginReq {
+  UserOauth userOauth = 1;
+}
+
+
+message UserOauthLoginRsp {
+  BaseResponse baseResponse = 1;
+  string  token = 2;
+  uint64 uid = 3; // 用户id
+}
+
+
+message AddUserOauthReq {
+  UserOauth userOauth = 1;
+}
+
+message AddUserOauthRsp {
+  uint64 userOauthId = 1;
+}
+
+message UpdateUserOauthReq{
+  BaseResponse baseResponse = 1;
+  UserOauth userOauth = 2;
+}
+
+
+
+
+message UpdateUserOauthRsp{
+  BaseResponse baseResponse = 1;
+  UserOauth userOauth = 2;
+}
+
+
+message UserOauth {
+  string platform = 1; // 平台:wechat=微信
+  string openId = 2;
+  string unionid = 3;
+  int32  sex = 4;
+  string name = 5;
+  string avatar = 6;
+  uint64 uId = 8; // 用户id
+}
+
+message GenerateTokenReq {
+  uint64 uid = 1; // 用户id
+}
+
+message GenerateTokenRsp {
+  BaseResponse baseResponse = 1;
+  string token = 2;
+}
+
+message ParseTokenReq {
+  string token = 1;
+}
+
+message ParseTokenRsp {
+  BaseResponse baseResponse = 1;
+  uint64 uid = 2; // 用户id
+}
+
+
+message UpdateUserReq{
+  string nick = 1; // 用户昵称
+}
+
+message UpdateUserRsp{
+  BaseResponse baseResponse = 1;
+}
+
+message AddUserReq{
+  string nick = 1;   // 用户昵称
+  string phone = 2; // 用户手机号
+}
+
+
+message AddUserRsp{
+  BaseResponse baseResponse = 1;
+  uint64 uid = 2; // 用户id
+}
+
+message GetFromUidReq{
+  uint64 uid = 1; // 用户id
+}
+
+message GetFromUidRsp{
+  BaseResponse baseResponse = 1;
+  UserInfo userInfo = 2; // 用户信息
+}
+
+message UserInfo {
+  uint64 uid = 1;     // 用户id
+  string nick = 2;    // 用户昵称
+  string phone = 3;   // 用户手机号
+  string  avatar = 4;  // 用户头像
+}
+
+message GetFromPhoneReq{
+  string phone = 1; // 手机号
+}
+
+message GetFromPhoneRsp {
+  BaseResponse baseResponse = 1;
+  UserInfo userInfo = 2;
 }
 
 
 message Error{
-    int32 code = 1;
-    string message = 2;
+  int32 code = 1;
+  string message = 2;
 }
 
 message BaseResponse{
-    bool success = 1;
-    Error error = 2;
+  bool success = 1;
+  Error error = 2;
 }
