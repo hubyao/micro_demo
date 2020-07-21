@@ -1,7 +1,6 @@
 package main
 
 import (
-	"net/http"
 	cors "github.com/micro/go-plugins/micro/cors/v2"
 	"github.com/micro/micro/v2/cmd"
 	"github.com/micro/micro/v2/plugin"
@@ -14,18 +13,18 @@ func main() {
 	// 注册插件
 	plugin.Register(cors.NewPlugin())
 
-	plugin.Register(plugin.NewPlugin(
-		plugin.WithHandler(xlog()),
-	))
+	// plugin.Register(plugin.NewPlugin(
+	// 	plugin.WithHandler(xlog()),
+	// ))
 
 	cmd.Init()
 }
 
-// 日志处理
-func xlog() plugin.Handler {
-	return func(h http.Handler) http.Handler {
-		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+// // 日志处理
+// func xlog() plugin.Handler {
+// 	return func(h http.Handler) http.Handler {
+// 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 
-		})
-	}
-}
+// 		})
+// 	}
+// }
