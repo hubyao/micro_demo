@@ -25,11 +25,12 @@ func Load(g *gin.Engine, mw ...gin.HandlerFunc) *gin.Engine {
 
 // Handle ...
 func Handle(g *gin.Engine) {
+	r := g.Group("/user")
 	// 需要登录验证的
-	_Authed := g.Group("", middleware.Auth())
+	_Authed := r.Group("", middleware.Auth())
 
 	// 不需要登录
-	e := g.Group("/v1/user")
+	e := r.Group("/v1/user")
 	{
 		e.POST("/sms", handler.Sms) // 发送验证码
 

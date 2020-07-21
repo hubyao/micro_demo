@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"micro_demo/basic/common"
 
 	"github.com/micro/cli/v2"
 	micro "github.com/micro/go-micro/v2"
@@ -15,6 +16,11 @@ import (
 	"micro_demo/user-srv/model"
 )
 
+var (
+	appName    = "user"
+	appAllName    = common.AppNamePrefix+".srv."+appName
+)
+
 func main() {
 	// 初始化配置、数据库等信息
 	basic.Init()
@@ -24,7 +30,7 @@ func main() {
 
 	// New Service
 	service := micro.NewService(
-		micro.Name("mu.micro.book.srv.user"),
+		micro.Name(appAllName),
 		micro.Registry(micReg),
 		micro.Version("latest"),
 	)
