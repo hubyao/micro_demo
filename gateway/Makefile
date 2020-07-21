@@ -4,7 +4,7 @@ run:
 
 .PHONY:
 build:
-	GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -o bin/gateway main.go
+	GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -o  ../build/gateway main.go
 
 .PHONY: docker
 docker:docker
