@@ -1,0 +1,13 @@
+bin/
+pkg/
+*.linux
+*.mac
+*.pkg
+*.log
+.DS_Store
+*.idea
+*.pyc
+*.zip
+.vscode/
+.log
+go.sum

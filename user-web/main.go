@@ -1,12 +1,18 @@
+/*
+ * @Author       : jianyao
+ * @Date         : 2020-07-20 08:29:53
+ * @LastEditTime : 2020-07-21 02:49:44
+ * @Description  : file content
+ */
 package main
 
 import (
 	"fmt"
-	"net/http"
-
 	"micro_demo/basic"
+	"micro_demo/basic/common"
 	"micro_demo/basic/config"
 	"micro_demo/user-web/handler"
+
 	"micro_demo/user-web/router"
 
 	"github.com/gin-gonic/gin"
@@ -14,7 +20,13 @@ import (
 	log "github.com/micro/go-micro/v2/logger"
 	"github.com/micro/go-micro/v2/registry"
 	"github.com/micro/go-micro/v2/registry/etcd"
+
 	"github.com/micro/go-micro/v2/web"
+)
+
+var (
+	appName    = "user"
+	appAllName    = common.AppNamePrefix+".api."+appName
 )
 
 func main() {
@@ -28,10 +40,9 @@ func main() {
 	// 创建新服务
 	service := web.NewService(
 		// 后面两个web，第一个是指是web类型的服务，第二个是服务自身的名字
-		web.Name("mu.micro.book.web.user"),
+		web.Name(appAllName),
 		web.Version("latest"),
 		web.Registry(micReg),
-		web.Address(":8088"),
 	)
 
 	// 初始化服务
@@ -47,11 +58,7 @@ func main() {
 
 	gin.SetMode("debug")
 
-	g := gin.New()
-	g.NoRoute(func(c *gin.Context) {
-		c.String(http.StatusNotFound, "The incorrect API route.")
-		return
-	})
+	g := gin.Default()
 
 	router.Load(
 		g,
@@ -59,7 +66,7 @@ func main() {
 
 	service.Handle("/", g)
 
-	// run service
+
 	if err := service.Run(); err != nil {
 		log.Fatal("", err)
 	}
