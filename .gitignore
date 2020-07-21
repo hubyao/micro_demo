@@ -11,3 +11,4 @@ pkg/
 .vscode/
 .log
 go.sum
+build/
