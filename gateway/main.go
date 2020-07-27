@@ -13,18 +13,21 @@ func main() {
 	// 注册插件
 	plugin.Register(cors.NewPlugin())
 
+
 	//plugin.Register(plugin.NewPlugin(
 	//	plugin.WithHandler(xlog()),
 	//))
 
+
 	cmd.Init()
 }
 
-// 日志处理
-//func xlog() plugin.Handler {
-//	return func(h http.Handler) http.Handler {
-//		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-//
-//		})
-//	}
-//}
+
+// // 日志处理
+// func xlog() plugin.Handler {
+// 	return func(h http.Handler) http.Handler {
+// 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+
+// 		})
+// 	}
+// }

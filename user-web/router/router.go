@@ -1,15 +1,16 @@
 /*
  * @Author       : jianyao
  * @Date         : 2020-07-14 08:32:22
- * @LastEditTime : 2020-07-14 08:36:54
+ * @LastEditTime : 2020-07-21 06:45:14
  * @Description  : file content
  */
 package router
 
 import (
-	"github.com/gin-gonic/gin"
 	"micro_demo/comm/xhttp/middleware"
 	"micro_demo/user-web/handler"
+
+	"github.com/gin-gonic/gin"
 )
 
 // Load 加载中间件
@@ -30,7 +31,7 @@ func Handle(g *gin.Engine) {
 	_Authed := r.Group("", middleware.Auth())
 
 	// 不需要登录
-	e := r.Group("/v1/user")
+	e := r.Group("/v1")
 	{
 		e.POST("/sms", handler.Sms) // 发送验证码
 
@@ -40,9 +41,8 @@ func Handle(g *gin.Engine) {
 		e.POST("/register", handler.UserRegister) // 注册
 	}
 
-
 	// 需要登录的接口
-	u := _Authed.Group("/v1/user")
+	u := _Authed.Group("/v1")
 	{
 		// 好友助力
 		u.GET("/friend/help", handler.FriendHelp) // 获取好友助力列表
