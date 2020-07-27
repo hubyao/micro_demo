@@ -73,4 +73,5 @@ func main() {
 func registryOptions(ops *registry.Options) {
 	etcdCfg := config.GetEtcdConfig()
 	ops.Addrs = []string{fmt.Sprintf("%s:%d", etcdCfg.GetHost(), etcdCfg.GetPort())}
+
 }
