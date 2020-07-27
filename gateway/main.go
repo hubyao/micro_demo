@@ -14,13 +14,14 @@ func main() {
 	plugin.Register(cors.NewPlugin())
 
 
-	//plugin.Register(plugin.NewPlugin(
-	//	plugin.WithHandler(xlog()),
-	//))
+	// plugin.Register(plugin.NewPlugin(
+	// 	plugin.WithHandler(xlog()),
+	// ))
 
 
 	cmd.Init()
 }
+
 
 
 // // 日志处理

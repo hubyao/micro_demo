@@ -1,3 +1,4 @@
+
 .PHONY: run
 run:
 	go run main.go --registry=etcd --registry_address=127.0.0.1:2379 api -handler=http  --namespace=mu.micro.book.api

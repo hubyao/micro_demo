@@ -11,5 +11,9 @@ pkg/
 .vscode/
 .log
 go.sum
+<<<<<<< HEAD
 vendor
 
+=======
+build/
+>>>>>>> master

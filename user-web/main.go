@@ -1,8 +1,8 @@
 /*
  * @Author       : jianyao
  * @Date         : 2020-07-20 08:29:53
- * @LastEditTime : 2020-07-21 06:45:05
- * @Description  : 用户服务
+ * @LastEditTime : 2020-07-21 02:49:44
+ * @Description  : file content
  */
 package main
 
@@ -26,7 +26,7 @@ import (
 
 var (
 	appName    = "user"
-	appAllName = common.AppNamePrefix + ".api." + appName
+	appAllName    = common.AppNamePrefix+".api."+appName
 )
 
 func main() {
@@ -65,6 +65,8 @@ func main() {
 	)
 
 	service.Handle("/", g)
+
+
 
 	if err := service.Run(); err != nil {
 		log.Fatal("", err)
