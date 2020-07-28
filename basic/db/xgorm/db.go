@@ -1,6 +1,8 @@
 package xgorm
 
 import (
+	"log"
+	//"micro_demo/comm/logging"
 	"sync"
 
 	"micro_demo/basic/config"
@@ -9,12 +11,12 @@ import (
 
 	"github.com/jinzhu/gorm"
 	"github.com/micro-in-cn/starter-kit/console/account/conf"
-	"github.com/micro/go-micro/v2/util/log"
+	//"github.com/micro/go-micro/v2/util/log"
 )
 
 var (
 	dbConf conf.Database // 数据库配置
-	db     *gorm.DB      // gorm cli
+	gdb    *gorm.DB      // gorm cli
 	once   sync.Once     // 用于单例
 )
 
@@ -22,8 +24,22 @@ var (
 func Init() {
 	// 单例
 	once.Do(func() {
-		dbConf = conf.Database{}
-		xdb, err := gorm.Open("mysql", config.GetMysqlConfig().GetURL())
+
+		mysqlCfg := &config.MysqlConfig{}
+		if !mysqlCfg.Enable {
+			return
+		}
+
+		config.GetConfig(mysqlCfg)
+
+		dbConf = conf.Database{
+			MaxOpenConns:    mysqlCfg.MaxOpenConnection,
+			MaxIdleConns:    mysqlCfg.MaxIdleConnection,
+			ConnMaxLifetime: mysqlCfg.ConnMaxLifetime,
+		}
+
+		cli := mysqlCfg.GetURL()
+		xdb, err := gorm.Open("mysql", cli)
 		if err != nil {
 			log.Fatal(err)
 			return
@@ -34,11 +50,11 @@ func Init() {
 		xdb.DB().SetMaxIdleConns(dbConf.MaxIdleConns)
 		xdb.DB().SetConnMaxLifetime(dbConf.ConnMaxLifetime)
 		xdb.SingularTable(true)
-		db = xdb
+		gdb = xdb
 	})
 }
 
 // GetDB 获取db
 func GetDB() *gorm.DB {
-	return db
+	return gdb
 }

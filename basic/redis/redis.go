@@ -4,8 +4,8 @@ import (
 	"sync"
 
 	"github.com/go-redis/redis"
-	"micro_demo/basic/config"
 	log "github.com/micro/go-micro/v2/logger"
+	"micro_demo/basic/config"
 )
 
 var (
@@ -23,8 +23,9 @@ func Init() {
 		log.Info("已经初始化过Redis...")
 		return
 	}
-
-	redisConfig := config.GetRedisConfig()
+	redisConfig := &config.RedisConfig{}
+	config.GetConfig(redisConfig)
+	//redisConfig := config.GetRedisConfig()
 
 	// 打开才加载
 	if redisConfig != nil && redisConfig.GetEnabled() {
@@ -33,10 +34,10 @@ func Init() {
 		// 加载哨兵模式
 		if redisConfig.GetSentinelConfig() != nil && redisConfig.GetSentinelConfig().GetEnabled() {
 			log.Info("初始化Redis，哨兵模式...")
-			initSentinel(redisConfig)
+			initSentinel(*redisConfig)
 		} else { // 普通模式
 			log.Info("初始化Redis，普通模式...")
-			initSingle(redisConfig)
+			initSingle(*redisConfig)
 		}
 
 		log.Info("初始化Redis，检测连接...")

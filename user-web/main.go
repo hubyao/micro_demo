@@ -26,7 +26,7 @@ import (
 
 var (
 	appName    = "user"
-	appAllName    = common.AppNamePrefix+".api."+appName
+	appAllName = common.AppNamePrefix + ".api." + appName
 )
 
 func main() {
@@ -66,7 +66,6 @@ func main() {
 
 	service.Handle("/", g)
 
-
 	if err := service.Run(); err != nil {
 		log.Fatal("", err)
 	}
@@ -78,6 +77,7 @@ func main() {
 }
 
 func registryOptions(ops *registry.Options) {
-	etcdCfg := config.GetEtcdConfig()
+	etcdCfg := &config.EtcdConfig{}
+	config.GetConfig(etcdCfg)
 	ops.Addrs = []string{fmt.Sprintf("%s:%d", etcdCfg.GetHost(), etcdCfg.GetPort())}
 }
