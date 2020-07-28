@@ -1,4 +1,7 @@
 GOPATH:=$(shell go env GOPATH)
+.PHONY:
+run-loc:
+	go run main.go -env=loc
 
 .PHONY: build
 build: proto

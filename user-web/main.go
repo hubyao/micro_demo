@@ -7,7 +7,6 @@
 package main
 
 import (
-	"fmt"
 	"micro_demo/basic"
 	"micro_demo/basic/common"
 	"micro_demo/basic/config"
@@ -18,24 +17,22 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/micro/cli/v2"
 	log "github.com/micro/go-micro/v2/logger"
-	"github.com/micro/go-micro/v2/registry"
 	"github.com/micro/go-micro/v2/registry/etcd"
 
 	"github.com/micro/go-micro/v2/web"
 )
 
 var (
-	appName    = "user"
-	appAllName = common.AppNamePrefix + ".api." + appName
+	appAllName = ""
 )
 
 func main() {
 
 	// 初始化配置
 	basic.Init()
-
+	appAllName = common.AppNamePrefix + ".api." + config.GetProfiles().AppName
 	// 使用etcd注册
-	micReg := etcd.NewRegistry(registryOptions)
+	micReg := etcd.NewRegistry(config.RegistryOptions)
 
 	// 创建新服务
 	service := web.NewService(
@@ -43,6 +40,11 @@ func main() {
 		web.Name(appAllName),
 		web.Version("latest"),
 		web.Registry(micReg),
+		web.Flags(
+			&cli.StringFlag{
+				Name: "env",
+			},
+		),
 	)
 
 	// 初始化服务
@@ -74,10 +76,4 @@ func main() {
 	if err := service.Run(); err != nil {
 		log.Fatal(err)
 	}
-}
-
-func registryOptions(ops *registry.Options) {
-	etcdCfg := &config.EtcdConfig{}
-	config.GetConfig(etcdCfg)
-	ops.Addrs = []string{fmt.Sprintf("%s:%d", etcdCfg.GetHost(), etcdCfg.GetPort())}
 }

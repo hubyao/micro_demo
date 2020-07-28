@@ -1,6 +1,10 @@
 package config
 
 import (
+	"flag"
+	"fmt"
+	"micro_demo/basic/common"
+	"micro_demo/comm/logging"
 	"os"
 	"path/filepath"
 	"sync"
@@ -9,6 +13,7 @@ import (
 	//"github.com/micro/go-micro/v2/config/source"
 	"github.com/micro/go-micro/v2/config/source/file"
 	log "github.com/micro/go-micro/v2/logger"
+	"github.com/micro/go-micro/v2/registry"
 )
 
 var (
@@ -16,14 +21,12 @@ var (
 )
 
 var (
-	defaultRootPath         = "app"
-	defaultConfigFilePrefix = "application-"
-	defaultConfigFile       = "application-loc"
-	profiles                defaultProfiles
-	m                       sync.RWMutex
-	inited                  bool
-	configSrv               *configService
-	env                     string
+	defaultRootPath   = "app"
+	defaultConfigFile = "application-loc"
+	m                 sync.RWMutex
+	inited            bool
+	configSrv         *configService
+	env               string
 )
 
 type configService struct {
@@ -33,28 +36,27 @@ type configService struct {
 // TODO: 解析与micro原生命令行参数出现冲突无法实现
 // flagParse 参数解析
 func flagParseEnv() {
-	//// 获取命令行参数
-	//flag.StringVar(&env, "env", "", "环境, 可选项 loc,dev,prod")
-	////flag.Parse()
-	////flag.
-	//
-	//if env == "" {
-	//	env = common.EnvLoc
-	//}
-	//
-	//switch env {
-	//case common.EnvLoc:
-	//	defaultConfigFile = "application-loc"
-	//case common.EnvDev:
-	//	defaultConfigFile = "application-dev"
-	//case common.EnvProd:
-	//	defaultConfigFile = "application-prod"
-	//default:
-	//	fmt.Println("env只支持 loc,dev,prod")
-	//	os.Exit(1)
-	//}
-	//
-	//log.Infof("启动环境: %v", env)
+	// 获取命令行参数
+	flag.StringVar(&env, "env", "", "环境, 可选项 loc,dev,prod")
+	flag.Parse()
+
+	if env == "" {
+		env = common.EnvLoc
+	}
+
+	switch env {
+	case common.EnvLoc:
+		defaultConfigFile = "application-loc"
+	case common.EnvDev:
+		defaultConfigFile = "application-dev"
+	case common.EnvProd:
+		defaultConfigFile = "application-prod"
+	default:
+		fmt.Println("env只支持 loc,dev,prod")
+		os.Exit(1)
+	}
+
+	log.Infof("启动环境: %v", env)
 
 }
 
@@ -84,30 +86,9 @@ func Init() {
 		panic(err)
 	}
 
-	// 找到需要引入的新配置文件
-	if err = config.Get(defaultRootPath, "profiles").Scan(&profiles); err != nil {
-		panic(err)
-	}
-
-	log.Infof("[Init] 加载配置文件：path: %s, %+v\n", filePath, profiles)
-
-	// 开始导入新文件
-	//if len(profiles.GetInclude()) > 0 {
-
-	sources := file.NewSource(file.WithPath(filePath))
-
-	// 加载include的文件
-	if err = config.Load(sources); err != nil {
-		panic(err)
-	}
-	//}
-
-	// 赋值
-	//config.Get(defaultRootPath, "etcd").Scan(&etcdConfig)
-	//config.Get(defaultRootPath, "mysql").Scan(&mysqlConfig)
-	//config.Get(defaultRootPath, "redis").Scan(&redisConfig)
-	//config.Get(defaultRootPath, "jwt").Scan(&jwtConfig)
-
+	var data interface{}
+	config.Get(defaultRootPath).Scan(&data)
+	logging.Logger().Infof("配置数据 %v", data)
 	// 标记已经初始化
 	inited = true
 	configSrv = &configService{
@@ -134,4 +115,18 @@ func GetConfig(data IGetConfig) {
 	//configSrv.initField[data.GetName()] = data
 
 	return
+}
+
+// GetProfiles 获取应用属性
+func GetProfiles() *ProfilesConfig {
+	cfg := &ProfilesConfig{}
+	GetConfig(cfg)
+	return cfg
+}
+
+// registryOptions 注册
+func RegistryOptions(ops *registry.Options) {
+	etcdCfg := &EtcdConfig{}
+	GetConfig(etcdCfg)
+	ops.Addrs = []string{fmt.Sprintf("%s:%d", etcdCfg.GetHost(), etcdCfg.GetPort())}
 }

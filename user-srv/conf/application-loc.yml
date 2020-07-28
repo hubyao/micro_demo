@@ -1,6 +1,7 @@
 app:
   profiles:
-    include: etcd
+    env: loc
+    app_name: user-srv
   etcd:
     enabled: true
     host: 127.0.0.1

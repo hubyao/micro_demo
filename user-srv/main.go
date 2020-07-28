@@ -1,31 +1,40 @@
 package main
 
 import (
-	"fmt"
 	"github.com/micro/cli/v2"
 	micro "github.com/micro/go-micro/v2"
 	log "github.com/micro/go-micro/v2/logger"
-	"github.com/micro/go-micro/v2/registry"
 	"github.com/micro/go-micro/v2/registry/etcd"
 	"micro_demo/basic"
+	"micro_demo/basic/common"
 	"micro_demo/basic/config"
 	s "micro_demo/proto/user"
 	"micro_demo/user-srv/handler"
 	"micro_demo/user-srv/model"
 )
 
+var (
+	appFullName = ""
+)
+
 func main() {
 	// 初始化配置、数据库等信息
 	basic.Init()
-
+	appFullName = common.AppNamePrefix + ".srv." + config.GetProfiles().AppName
 	// 使用etcd注册
-	micReg := etcd.NewRegistry(registryOptions)
+	micReg := etcd.NewRegistry(config.RegistryOptions)
 
 	// New Service
 	service := micro.NewService(
-		micro.Name("mu.micro.book.srv.user"),
+		micro.Name(appFullName),
 		micro.Registry(micReg),
 		micro.Version("latest"),
+		micro.Flags(
+			&cli.StringFlag{
+				Name:  "env",
+				Usage: "",
+				Value: "",
+			}),
 	)
 
 	// 服务初始化
@@ -47,10 +56,4 @@ func main() {
 	if err := service.Run(); err != nil {
 		log.Fatal(err)
 	}
-}
-
-func registryOptions(ops *registry.Options) {
-	etcdCfg := &config.EtcdConfig{}
-	config.GetConfig(etcdCfg)
-	ops.Addrs = []string{fmt.Sprintf("%s:%d", etcdCfg.GetHost(), etcdCfg.GetPort())}
 }
