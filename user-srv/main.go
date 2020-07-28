@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-
 	"github.com/micro/cli/v2"
 	micro "github.com/micro/go-micro/v2"
 	log "github.com/micro/go-micro/v2/logger"
@@ -51,6 +50,7 @@ func main() {
 }
 
 func registryOptions(ops *registry.Options) {
-	etcdCfg := config.GetEtcdConfig()
+	etcdCfg := &config.EtcdConfig{}
+	config.GetConfig(etcdCfg)
 	ops.Addrs = []string{fmt.Sprintf("%s:%d", etcdCfg.GetHost(), etcdCfg.GetPort())}
 }

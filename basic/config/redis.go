@@ -5,7 +5,7 @@ import (
 )
 
 // RedisConfig redis 配置
-type RedisConfig interface {
+type IRedisConfig interface {
 	GetEnabled() bool
 	GetConn() string
 	GetPassword() string
@@ -20,8 +20,8 @@ type RedisSentinelConfig interface {
 	GetNodes() []string
 }
 
-// defaultRedisConfig redis 配置
-type defaultRedisConfig struct {
+// *RedisConfig redis 配置
+type RedisConfig struct {
 	Enabled  bool          `json:"enabled"`
 	Conn     string        `json:"conn"`
 	Password string        `json:"password"`
@@ -37,28 +37,32 @@ type redisSentinel struct {
 	nodes   []string
 }
 
+func (r *RedisConfig) GetName() string {
+	return "redis"
+}
+
 // GetEnabled redis 配置是否激活
-func (r defaultRedisConfig) GetEnabled() bool {
+func (r *RedisConfig) GetEnabled() bool {
 	return r.Enabled
 }
 
 // GetConn redis 地址
-func (r defaultRedisConfig) GetConn() string {
+func (r *RedisConfig) GetConn() string {
 	return r.Conn
 }
 
 // GetPassword redis 密码
-func (r defaultRedisConfig) GetPassword() string {
+func (r *RedisConfig) GetPassword() string {
 	return r.Password
 }
 
 // GetDBNum redis 数据库分区序号
-func (r defaultRedisConfig) GetDBNum() int {
+func (r *RedisConfig) GetDBNum() int {
 	return r.DBNum
 }
 
 // GetDBNum redis 数据库分区序号
-func (r defaultRedisConfig) GetSentinelConfig() RedisSentinelConfig {
+func (r *RedisConfig) GetSentinelConfig() RedisSentinelConfig {
 	return r.sentinel
 }
 
