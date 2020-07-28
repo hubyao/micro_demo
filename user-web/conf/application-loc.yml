@@ -1,7 +1,7 @@
 app:
   profiles:
     env: loc
-    app_name: user-web
+    app_name: user
   etcd:
     enabled: true
     host: 127.0.0.1
