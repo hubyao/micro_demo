@@ -2,7 +2,10 @@ package handler
 
 import (
 	"context"
+	merror "github.com/micro/go-micro/v2/errors"
 	log "github.com/micro/go-micro/v2/logger"
+	"github.com/pkg/errors"
+	"golang.org/x/xerrors"
 	"math/rand"
 	"micro_demo/comm/logging"
 	"micro_demo/comm/xhttp/errno"
@@ -102,36 +105,99 @@ func (e *Service) GetFromUid(ctx context.Context, req *pbUser.GetFromUidReq, rsp
 	return nil
 }
 
+type Errno struct {
+	Code    int    `json:"code"`
+	Message string `json:"message"`
+}
+
+func (err Errno) Error() string {
+	return err.Message
+}
+
+type ErrnoV2 struct {
+	Code    int    `json:"code"`
+	Message string `json:"message"`
+	Id      string `json:"id"`
+	Detail  string `json:"detail"`
+}
+
+func (err ErrnoV2) Error() string {
+	return err.Message
+}
+
 // GetFromPhone 根据手机号获取信息
 func (e *Service) GetFromPhone(ctx context.Context, req *pbUser.GetFromPhoneReq, rsp *pbUser.GetFromPhoneRsp) error {
-	rsp.BaseResponse = &pbUser.BaseResponse{}
-	rsp.BaseResponse.Success = true
 
-	data, err := userService.GetFromPhone(req.Phone)
+	if req.Phone == "3" {
+		return errors.New("bad param")
+	}
+	if req.Phone == "1" {
+		return Errno{
+			Code:    20001,
+			Message: "20001错误",
+		}
 
-	if err != nil {
-		logging.Logger().Error(err)
-		rsp.BaseResponse.Success = false
-		rsp.BaseResponse.Error = &pbUser.Error{
-			Code:    500,
-			Message: err.Error(),
+	}
+	if req.Phone == "2" {
+		return errors.WithMessage(errors.New("bad param"), "count row number")
+	}
+
+	if req.Phone == "4" {
+		return errors.Wrap(errors.New("bad param"), "read failed")
+	}
+	if req.Phone == "5" {
+
+		return xerrors.New("324")
+	}
+
+	if req.Phone == "6" {
+
+		return ErrnoV2{
+			Code:    123,
+			Message: "test",
+			Id:      "123",
+			Detail:  "rewrew",
 		}
 	}
-	if nil == data {
-		logging.Logger().Debug(rsp)
-		return nil
+
+	if req.Phone == "7" {
+
+		return merror.New("1", "2001", 2000)
 	}
 
-	rsp.UserInfo = &pbUser.UserInfo{
-		Uid:   data.UId,
-		Nick:  data.Nick,
-		Phone: data.Phone,
+	if req.Phone == "8" {
+
+		return errno.ErrSendSms.RpcErr()
 	}
+
+	//rsp.BaseResponse = &pbUser.BaseResponse{}
+	//rsp.BaseResponse.Success = true
+	//
+	//data, err := userService.GetFromPhone(req.Phone)
+	//
+	//if err != nil {
+	//	logging.Logger().Error(err)
+	//	rsp.BaseResponse.Success = false
+	//	rsp.BaseResponse.Error = &pbUser.Error{
+	//		Code:    500,
+	//		Message: err.Error(),
+	//	}
+	//}
+	//if nil == data {
+	//	logging.Logger().Debug(rsp)
+	//	return nil
+	//}
+	//
+	//rsp.UserInfo = &pbUser.UserInfo{
+	//	Uid:   data.UId,
+	//	Nick:  data.Nick,
+	//	Phone: data.Phone,
+	//}
 
 	return nil
 }
 
-// ParseToken 生成token 
+// ParseToken 生成token
 func (e *Service) ParseToken(ctx context.Context, req *pbUser.ParseTokenReq, rsp *pbUser.ParseTokenRsp) error {
 	rsp.BaseResponse = &pbUser.BaseResponse{}
 	rsp.BaseResponse.Success = true

@@ -26,7 +26,7 @@ import (
 
 var (
 	appName    = "user"
-	appAllName    = common.AppNamePrefix+".api."+appName
+	appAllName = common.AppNamePrefix + ".api." + appName
 )
 
 func main() {
@@ -43,6 +43,7 @@ func main() {
 		web.Name(appAllName),
 		web.Version("latest"),
 		web.Registry(micReg),
+		web.Address(":8080"),
 	)
 
 	// 初始化服务
@@ -65,8 +66,6 @@ func main() {
 	)
 
 	service.Handle("/", g)
-
-
 
 	if err := service.Run(); err != nil {
 		log.Fatal("", err)

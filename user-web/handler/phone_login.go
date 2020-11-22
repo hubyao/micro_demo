@@ -8,6 +8,7 @@ package handler
 
 import (
 	"context"
+	merror "github.com/micro/go-micro/v2/errors"
 
 	"github.com/gin-gonic/gin"
 	"micro_demo/comm/logging"
@@ -25,33 +26,39 @@ func PhoneLogin(c *gin.Context) {
 
 	// 绑定数据
 	if err := c.ShouldBind(&req); err != nil {
-		xhttp.FailRsp(c, err,"")
+		xhttp.FailRsp(c, err, "")
 		return
 	}
-
 
 	rpcGetFromPhone, err := UserPbClient.GetFromPhone(context.Background(), &pbUser.GetFromPhoneReq{
 		Phone: req.Phone,
 	})
+
 	if err != nil {
-		logging.Logger().Error(err)
+		logging.Logger().Info(err.Error())
+		logging.Logger().Info(errno.ErrSendSms.RpcErr())
+		logging.Logger().Info(errno.ErrSendSms.RpcErr().Error())
+		logging.Logger().Info(err.Error() == merror.New("1", "2001", 2000).Error())
+		if errno.ErrSendSms.EqRpcErr(err) {
+			xhttp.FailRsp(c, errno.ErrSendSms, "")
+			return
+		}
 		xhttp.FailRsp(c, err, "")
 		return
 	}
-	if !rpcGetFromPhone.BaseResponse.Success{
+	if !rpcGetFromPhone.BaseResponse.Success {
 		logging.Logger().Error(rpcGetFromPhone.BaseResponse.Error)
 		xhttp.FailRsp(c, errno.ErrUserLogin, "")
 		return
 	}
 
-
-	if nil != rpcGetFromPhone.UserInfo{
+	if nil != rpcGetFromPhone.UserInfo {
 		uid = rpcGetFromPhone.UserInfo.Uid
 	}
 
 	// 判断用户是否存在
 	if 0 == rpcGetFromPhone.UserInfo.Uid {
-		xhttp.FailRsp(c,errno.ErrUserNotExist,"")
+		xhttp.FailRsp(c, errno.ErrUserNotExist, "")
 		return
 	}
 
@@ -67,13 +74,13 @@ func PhoneLogin(c *gin.Context) {
 	}
 
 	// 密码错误
-	if !rpcVerifyPwd.Ok{
+	if !rpcVerifyPwd.Ok {
 		xhttp.FailRsp(c, errno.ErrUserPwdInvalid, "")
 		return
 	}
 
 	// 生成token
-	rpcGenerateToken, err  := UserPbClient.GenerateToken(context.Background(), &pbUser.GenerateTokenReq{
+	rpcGenerateToken, err := UserPbClient.GenerateToken(context.Background(), &pbUser.GenerateTokenReq{
 		Uid: uid,
 	})
 
@@ -83,18 +90,16 @@ func PhoneLogin(c *gin.Context) {
 		return
 	}
 
-	if !rpcGenerateToken.BaseResponse.Success{
+	if !rpcGenerateToken.BaseResponse.Success {
 		logging.Logger().Error(rpcGenerateToken.BaseResponse.Error)
 		xhttp.FailRsp(c, errno.ErrUserLogin, "")
 		return
 	}
 
-
 	rsp.Token = rpcGenerateToken.Token
 	rsp.Uid = uid
 	xhttp.OkRsp(c, rsp)
 }
-
 
 // UserRegister 用户注册
 //func UserRegister(c *gin.Context,req phoneLoginReq)(uid uint64)  {
@@ -118,20 +123,13 @@ func PhoneLogin(c *gin.Context) {
 //	return rpcAddUser.Uid
 //}
 
-
-
-
 type phoneLoginReq struct {
 	Phone string `json:"phone"  binding:"required"` // 手机号
-	Pwd   string `json:"pwd" binding:"required"` // 密码
+	Pwd   string `json:"pwd" binding:"required"`    // 密码
 }
 
 type phoneLoginRsp struct {
 	Token string `json:"token"`
 	Uid   uint64 `json:"uid"`
-	IsNew bool  `json:"is_new"` // 新用户状态:true=新用户,false=老用户
+	IsNew bool   `json:"is_new"` // 新用户状态:true=新用户,false=老用户
 }
-
-
-
-

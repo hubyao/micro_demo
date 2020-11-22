@@ -1,6 +1,10 @@
 package errno
 
-import "fmt"
+import (
+	"fmt"
+	merror "github.com/micro/go-micro/v2/errors"
+	"micro_demo/comm/logging"
+)
 
 // Errno ...
 type Errno struct {
@@ -28,6 +32,18 @@ func New(errno *Errno, err error) *Err {
 func (err *Err) Add(message string) error {
 	err.Message += " " + message
 	return err
+}
+
+func (err *Errno) RpcErr() error {
+	logging.Logger().Info(merror.New("", err.Message, int32(err.Code)))
+	return merror.New("", err.Message, int32(err.Code))
+}
+
+func (err *Errno) EqRpcErr(contrast error) bool {
+	if contrast.Error() == err.RpcErr().Error() {
+		return true
+	}
+	return false
 }
 
 // Addf ...
